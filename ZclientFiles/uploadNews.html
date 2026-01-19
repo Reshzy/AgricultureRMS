@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm News Upload | Farmers Record Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dropzone {
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+        .dropzone.active {
+            border-color: #4caf50;
+            background-color: rgba(76, 175, 80, 0.05);
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .tag {
+            transition: all 0.2s ease;
+        }
+        .tag:hover {
+            transform: scale(1.05);
+        }
+        .tab-button.active {
+            border-bottom-color: #4caf50;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+         <div class="sidebar fixed h-screen bg-green-800 text-white w-64 z-50 shadow-lg" id="sidebar">
+        <div class="p-4 flex items-center space-x-3 border-b border-green-700">
+          <img src="logo.jpeg" style="width: 50px; height: auto">
+            <span class="logo-text text-xl font-bold">Claveria DA</span>
+        </div>
+        
+        <div class="p-4">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center">
+                    <i class="fas fa-user-tie text-xl"></i>
+                </div>
+                <div class="nav-text">
+                    <div class="font-medium">Admin User</div>
+                    <div class="text-xs text-green-200">Administrator</div>
+                </div>
+            </div>
+            
+            <ul class="space-y-2">
+                <li>
+                    <a href="web_dashboard.html" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="records.html" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-users"></i>
+                        <span class="nav-text">Farmers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="uploadNews.html" class="nav-item flex items-center space-x-3 p-3 rounded-lg bg-green-700">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="nav-text">News</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="absolute bottom-0 w-full p-4 border-t border-green-700">
+            <a href="landingpage.html" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 transition">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span>
+                
+            </a>
+        </div>
+    </div>
+    
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 overflow-auto ml-64">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Tabs -->
+                <div class="border-b border-gray-200">
+                    <nav class="flex -mb-px">
+                        <button id="viewTab" class="tab-button active py-4 px-6 text-center border-b-2 font-medium text-sm border-green-500 text-green-600">
+                            <i class="fas fa-list mr-2"></i> View News
+                        </button>
+                        <button id="uploadTab" class="tab-button py-4 px-6 text-center border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                            <i class="fas fa-plus-circle mr-2"></i> Upload News
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- View News Section -->
+                <div id="viewSection" class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Published News</h2>
+                        <div class="relative">
+                            <input type="text" placeholder="Search news..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categories</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Audience</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Published</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- Sample News Item 1 -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded" src="https://via.placeholder.com/40" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">New Weather Advisory</div>
+                                                <div class="text-sm text-gray-500">Important storm warning</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Weather</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">All Farmers</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 hours ago</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-green-600 hover:text-green-900 mr-3">Edit</button>
+                                        <button class="text-red-600 hover:text-red-900">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Sample News Item 2 -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded" src="https://via.placeholder.com/40" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Market Price Update</div>
+                                                <div class="text-sm text-gray-500">Latest commodity prices</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Market</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Crop Farmers</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 day ago</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-green-600 hover:text-green-900 mr-3">Edit</button>
+                                        <button class="text-red-600 hover:text-red-900">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between border-t border-gray-200 pt-4 mt-4">
+                        <div class="flex-1 flex justify-between sm:hidden">
+                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> Previous </a>
+                            <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> Next </a>
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-gray-700">
+                                    Showing <span class="font-medium">1</span> to <span class="font-medium">2</span> of <span class="font-medium">5</span> results
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <span class="sr-only">Previous</span>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                    <a href="#" aria-current="page" class="z-10 bg-green-50 border-green-500 text-green-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> 1 </a>
+                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> 2 </a>
+                                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> 3 </a>
+                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <span class="sr-only">Next</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload News Section -->
+                <div id="uploadSection" class="p-6 hidden">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-plus-circle mr-2"></i> Upload News</h2>
+                        <p class="mt-1 text-gray-600">Share important updates and information with farmers</p>
+                    </div>
+                <div class="p-6">
+                    <form id="newsForm" class="space-y-6">
+                        <!-- Title -->
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">News Title <span class="text-red-500">*</span></label>
+                            <input type="text" id="title" name="title" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                                placeholder="Enter news title">
+                        </div>
+
+                        <!-- Content -->
+                        <div>
+                            <label for="content" class="block text-sm font-medium text-gray-700 mb-1">News Content <span class="text-red-500">*</span></label>
+                            <textarea id="content" name="content" rows="6" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                                placeholder="Write detailed news content here..."></textarea>
+                        </div>
+
+                        <!-- Categories -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Categories</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="category" value="weather" class="rounded text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Weather Updates</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="category" value="market" class="rounded text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Market Prices</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="category" value="training" class="rounded text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Training Programs</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="category" value="government" class="rounded text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Government Schemes</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="category" value="technology" class="rounded text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Farming Technology</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Target Audience -->
+                        <div>
+                            <label for="audience" class="block text-sm font-medium text-gray-700 mb-1">Target Audience</label>
+                            <select id="audience" name="audience" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                <option value="all">All Farmers</option>
+                                <option value="dairy">Farmers</option>
+                                <option value="crop">Farm Workers</option>
+                                <option value="poultry">Fisherfolk</option>
+                                <option value="organic">Agri youth</option>
+                            </select>
+                        </div>
+
+                        <!-- Priority -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                            <div class="flex space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="priority" value="normal" checked class="text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Normal</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="priority" value="important" class="text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Important</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="priority" value="urgent" class="text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Urgent</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
+                            <div id="dropzone" class="dropzone rounded-lg p-8 text-center cursor-pointer">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+                                    <p class="text-gray-500">Drag & drop your image here, or click to browse</p>
+                                    <p class="text-xs text-gray-400">Supports JPG, PNG up to 5MB</p>
+                                </div>
+                                <input type="file" id="fileInput" class="hidden" accept="image/*">
+                            </div>
+                            <div id="previewContainer" class="mt-4 hidden">
+                                <div class="flex items-center justify-between bg-gray-100 p-3 rounded-md">
+                                    <div class="flex items-center space-x-3">
+                                        <img id="previewImage" src="#" alt="Preview" class="w-12 h-12 object-cover rounded">
+                                        <div>
+                                            <p id="fileName" class="font-medium"></p>
+                                            <p id="fileSize" class="text-xs text-gray-500"></p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="removeImage" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div>
+                            <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">Tags (Press Enter to add)</label>
+                            <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500 transition">
+                                <div id="tagContainer" class="flex flex-wrap gap-2 mr-2"></div>
+                                <input type="text" id="tagInput" placeholder="Add tags..." class="flex-grow outline-none">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Add relevant tags to help farmers find this news easily</p>
+                        </div>
+
+                        <!-- Publish Options -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Publish Options</label>
+                            <div class="flex items-center space-x-4">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="publish" value="now" checked class="text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Publish Now</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="publish" value="schedule" class="text-green-600 focus:ring-green-500">
+                                    <span class="ml-2">Schedule for Later</span>
+                                </label>
+                            </div>
+                            <div id="scheduleContainer" class="mt-3 hidden">
+                                <label for="scheduleDate" class="block text-sm font-medium text-gray-700 mb-1">Publish Date & Time</label>
+                                <div class="flex space-x-2">
+                                    <input type="date" id="scheduleDate" class="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                    <input type="time" id="scheduleTime" class="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                            <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition">
+                                Save Draft
+                            </button>
+                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition flex items-center">
+                                <i class="fas fa-paper-plane mr-2"></i> Publish News
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mt-3">News Published Successfully!</h3>
+                <div class="mt-2 text-sm text-gray-500">
+                    <p>Your news has been successfully published and is now visible to farmers.</p>
+                </div>
+                <div class="mt-4">
+                    <button type="button" id="modalClose" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const viewTab = document.getElementById('viewTab');
+        const uploadTab = document.getElementById('uploadTab');
+        const viewSection = document.getElementById('viewSection');
+        const uploadSection = document.getElementById('uploadSection');
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeImage = document.getElementById('removeImage');
+        const tagInput = document.getElementById('tagInput');
+        const tagContainer = document.getElementById('tagContainer');
+        const publishRadios = document.querySelectorAll('input[name="publish"]');
+        const scheduleContainer = document.getElementById('scheduleContainer');
+        const newsForm = document.getElementById('newsForm');
+        const successModal = document.getElementById('successModal');
+        const modalClose = document.getElementById('modalClose');
+
+        // Dropzone functionality
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                const file = e.target.files[0];
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size exceeds 5MB limit');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    previewImage.src = event.target.result;
+                    fileName.textContent = file.name;
+                    fileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropzone.classList.add('active');
+        }
+
+        function unhighlight() {
+            dropzone.classList.remove('active');
+        }
+
+        dropzone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
+
+        removeImage.addEventListener('click', () => {
+            previewContainer.classList.add('hidden');
+            fileInput.value = '';
+        });
+
+        // Tags functionality
+        tagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && tagInput.value.trim() !== '') {
+                e.preventDefault();
+                const tagText = tagInput.value.trim();
+                if (tagText) {
+                    const tag = document.createElement('div');
+                    tag.className = 'tag bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center';
+                    tag.innerHTML = `
+                        ${tagText}
+                        <button type="button" class="ml-2 text-green-600 hover:text-green-800">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    `;
+                    tagContainer.appendChild(tag);
+                    tagInput.value = '';
+                    
+                    // Add remove functionality to the new tag
+                    tag.querySelector('button').addEventListener('click', () => {
+                        tag.remove();
+                    });
+                }
+            }
+        });
+
+        // Publish options
+        publishRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'schedule') {
+                    scheduleContainer.classList.remove('hidden');
+                } else {
+                    scheduleContainer.classList.add('hidden');
+                }
+            });
+        });
+
+        // Form submission
+        newsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Here you would normally send the form data to the server
+            // For demo purposes, we'll just show the success modal
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                successModal.classList.remove('hidden');
+            }, 1000);
+        });
+
+        // Tab switching
+        viewTab.addEventListener('click', () => {
+            viewTab.classList.add('active', 'border-green-500', 'text-green-600');
+            viewTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            uploadTab.classList.remove('active', 'border-green-500', 'text-green-600');
+            uploadTab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            viewSection.classList.remove('hidden');
+            uploadSection.classList.add('hidden');
+        });
+
+        uploadTab.addEventListener('click', () => {
+            uploadTab.classList.add('active', 'border-green-500', 'text-green-600');
+            uploadTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            viewTab.classList.remove('active', 'border-green-500', 'text-green-600');
+            viewTab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+            uploadSection.classList.remove('hidden');
+            viewSection.classList.add('hidden');
+        });
+
+        // Modal close
+        modalClose.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+            // Reset form after successful submission
+            newsForm.reset();
+            tagContainer.innerHTML = '';
+            previewContainer.classList.add('hidden');
+            scheduleContainer.classList.add('hidden');
+            document.querySelector('input[name="publish"][value="now"]').checked = true;
+        });
+    </script>
+</body>
+</html>

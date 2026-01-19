@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmTrack - Claveria Agriculture Department</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(20,83,45,0.9) 0%, rgba(56,161,105,0.9) 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-leaf text-green-600 text-2xl"></i>
+                <span class="text-xl font-bold text-green-800">FarmTrack</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-green-700 hover:text-green-500 font-medium">Home</a>
+                <a href="#features" class="text-gray-600 hover:text-green-500 font-medium">Features</a>
+                <a href="#about" class="text-gray-600 hover:text-green-500 font-medium">About</a>
+                <a href="#contact" class="text-gray-600 hover:text-green-500 font-medium">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="web_dashboard.html" class="px-4 py-2 text-green-700 font-medium hover:bg-green-50 rounded-lg">Login</a>
+                <a href="web_dashboard.html" class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">Register</a>
+                <button class="md:hidden text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Farmers Record Management System</h1>
+                <p class="text-xl mb-8">A digital solution for the Department of Agriculture Claveria to efficiently manage farmer records, crop data, and agricultural programs.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#demo" class="px-6 py-3 bg-white text-green-700 font-bold rounded-lg hover:bg-gray-100 text-center">Request Demo</a>
+                    <a href="#features" class="px-6 py-3 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-green-700 transition text-center">Learn More</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Farmers working in field" class="rounded-xl shadow-2xl max-w-md w-full animate-float">
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="text-4xl font-bold text-green-600 mb-2">1,250+</div>
+                    <div class="text-gray-600">Registered Farmers</div>
+                </div>
+                <div class="p-6 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="text-4xl font-bold text-green-600 mb-2">15+</div>
+                    <div class="text-gray-600">Agricultural Programs</div>
+                </div>
+                <div class="p-6 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="text-4xl font-bold text-green-600 mb-2">24/7</div>
+                    <div class="text-gray-600">System Availability</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">System Features</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Comprehensive tools designed specifically for agricultural record management</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-md transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-user-check text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Farmer Profiles</h3>
+                    <p class="text-gray-600">Comprehensive digital profiles for all registered farmers including personal details, land information, and farming history.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-md transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-seedling text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Crop Monitoring</h3>
+                    <p class="text-gray-600">Track crop cycles, yields, and farming practices to provide better support and recommendations.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-md transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-tractor text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Equipment Registry</h3>
+                    <p class="text-gray-600">Manage agricultural equipment distribution and maintenance records across the municipality.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-md transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Analytics Dashboard</h3>
+                    <p class="text-gray-600">Real-time data visualization and reporting tools for agricultural planning and decision making.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-md transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-check text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Program Management</h3>
+                    <p class="text-gray-600">Coordinate and monitor government agricultural programs and subsidies efficiently.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-md transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Mobile Access</h3>
+                    <p class="text-gray-600">Field officers can access and update records directly from their mobile devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">About FarmTrack System</h2>
+                    <p class="text-gray-600 mb-6">Developed in partnership with the Department of Agriculture Claveria, FarmTrack is a comprehensive digital solution designed to modernize agricultural record-keeping and program management.</p>
+                    <p class="text-gray-600 mb-6">Our system helps bridge the gap between farmers and agricultural services, ensuring efficient delivery of programs and accurate data collection for better policy-making.</p>
+                    <div class="flex space-x-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Secure Data Storage</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Government Compliant</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Agriculture department meeting" class="rounded-xl shadow-lg w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-green-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Feedback from agricultural officers and farmers using our system</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                            <i class="fas fa-user-tie text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Juan Dela Cruz</h4>
+                            <p class="text-gray-600 text-sm">Agricultural Officer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"FarmTrack has revolutionized how we manage farmer data. What used to take weeks now takes minutes, allowing us to serve more farmers effectively."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Maria Santos</h4>
+                            <p class="text-gray-600 text-sm">Rice Farmer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"With this system, I no longer need to submit multiple forms for different programs. Everything is in one place and the process is much faster."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                            <i class="fas fa-user-graduate text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Robert Tan</h4>
+                            <p class="text-gray-600 text-sm">Agricultural Technician</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"The analytics tools help us identify which areas need more support and which programs are most effective. It's a game-changer for our department."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="demo" class="py-20 hero-gradient text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Transform Agricultural Record Management?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Join the digital transformation of Claveria's agricultural sector. Request a demo or register your department today.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#" class="px-8 py-3 bg-white text-green-700 font-bold rounded-lg hover:bg-gray-100">Request Demo</a>
+                <a href="register.html" class="px-8 py-3 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-green-700 transition">Register Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Have questions? Reach out to our support team</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                    <div class="bg-gray-50 p-8 rounded-xl">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Get in Touch</h3>
+                        
+                        <div class="mb-6">
+                            <div class="flex items-start mb-4">
+                                <i class="fas fa-map-marker-alt text-green-600 mt-1 mr-4"></i>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Address</h4>
+                                    <p class="text-gray-600">Department of Agriculture, Municipal Hall Compound, Claveria, Philippines</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start mb-4">
+                                <i class="fas fa-phone-alt text-green-600 mt-1 mr-4"></i>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Phone</h4>
+                                    <p class="text-gray-600">+63 123 456 7890</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <i class="fas fa-envelope text-green-600 mt-1 mr-4"></i>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Email</h4>
+                                    <p class="text-gray-600">agri.claveria@farmtrack.ph</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-200">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-200">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-200">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <form class="bg-gray-50 p-8 rounded-xl">
+                        <div class="mb-4">
+                            <label for="name" class="block text-gray-700 font-medium mb-2">Full Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+                            <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="subject" class="block text-gray-700 font-medium mb-2">Subject</label>
+                            <input type="text" id="subject" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="message" class="block text-gray-700 font-medium mb-2">Message</label>
+                            <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-leaf text-green-400 text-2xl"></i>
+                        <span class="text-xl font-bold">FarmTrack</span>
+                    </div>
+                    <p class="text-gray-400">A digital solution for the Department of Agriculture Claveria to modernize agricultural record management.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition">Features</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition">About</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">User Guide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Subscribe</h4>
+                    <p class="text-gray-400 mb-4">Get updates on new features and announcements.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg focus:outline-none text-gray-800 w-full">
+                        <button class="bg-green-600 px-4 py-2 rounded-r-lg hover:bg-green-700 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 FarmTrack - Department of Agriculture Claveria. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.querySelector('.md\\:hidden');
+            const mobileMenu = document.querySelector('.md\\:flex.space-x-8');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+                mobileMenu.classList.toggle('flex-col');
+                mobileMenu.classList.toggle('absolute');
+                mobileMenu.classList.toggle('top-16');
+                mobileMenu.classList.toggle('left-0');
+                mobileMenu.classList.toggle('right-0');
+                mobileMenu.classList.toggle('bg-white');
+                mobileMenu.classList.toggle('p-4');
+                mobileMenu.classList.toggle('shadow-md');
+                mobileMenu.classList.toggle('space-y-4');
+                mobileMenu.classList.toggle('space-x-0');
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if(!mobileMenu.classList.contains('hidden')) {
+                            mobileMenuButton.click();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

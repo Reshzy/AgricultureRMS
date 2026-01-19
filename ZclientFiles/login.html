@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Record Management System | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7fafc;
+        }
+        .login-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .input-field:focus {
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+        .btn-login:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div class="w-full max-w-md mx-auto">
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800">Farmer Record Management</h1>
+            <p class="mt-2 text-gray-600">Log in to manage your farm records efficiently</p>
+        </div>
+
+        <div class="bg-white rounded-lg login-card p-8">
+            <form>
+                <div class="mb-6">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-feather="mail" class="text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" class="pl-10 input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 transition duration-200" placeholder="your@email.com">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-feather="lock" class="text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" class="pl-10 input-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-200 transition duration-200" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-green-600 hover:text-green-500">Forgot password?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                    Sign In
+                </button>
+            </form>
+
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="web_dashboard.html" class="font-medium text-green-600 hover:text-green-500">Sign up</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center text-xs text-gray-500">
+            <p>© 2025 Farmer Record Management System. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Simple animation for the login card
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginCard = document.querySelector('.login-card');
+            loginCard.style.opacity = '0';
+            loginCard.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                loginCard.style.transition = 'all 0.3s ease-out';
+                loginCard.style.opacity = '1';
+                loginCard.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
