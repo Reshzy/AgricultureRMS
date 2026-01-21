@@ -63,6 +63,10 @@ Route::middleware([
 
             // Get recent news
             $recentNews = News::orderByDesc('created_at')->limit(5)->get();
+
+            // Get registration statistics
+            $registeredCount = Enrollment::whereNotNull('user_id')->count();
+            $notRegisteredCount = Enrollment::whereNull('user_id')->count();
         } catch (\Exception $e) {
             // Fallback values if database queries fail
             $totalEnrollments = 0;
@@ -71,6 +75,8 @@ Route::middleware([
             $enrollmentsByBarangay = collect();
             $recentEnrollments = collect();
             $recentNews = collect();
+            $registeredCount = 0;
+            $notRegisteredCount = 0;
         }
 
         return view('admin.dashboard', compact(
@@ -79,7 +85,9 @@ Route::middleware([
             'uniqueBarangays',
             'enrollmentsByBarangay',
             'recentEnrollments',
-            'recentNews'
+            'recentNews',
+            'registeredCount',
+            'notRegisteredCount'
         ));
     })->name('dashboard');
 

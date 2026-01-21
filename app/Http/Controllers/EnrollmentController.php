@@ -12,6 +12,7 @@ use App\Models\Enrollment;
 use App\Models\FarmParcel;
 use App\Models\FarmParcelHistory;
 use App\Models\FarmParcelItemHistory;
+use App\Models\User;
 use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class EnrollmentController extends Controller
@@ -74,7 +75,8 @@ class EnrollmentController extends Controller
 
     public function create()
     {
-        return view('admin.enrollments.create');
+        $users = User::orderBy('name')->get();
+        return view('admin.enrollments.create', compact('users'));
     }
 
     public function show(Enrollment $enrollment)
@@ -93,7 +95,8 @@ class EnrollmentController extends Controller
     public function edit(Enrollment $enrollment)
     {
         $enrollment->load(['farmParcels.items']);
-        return view('admin.enrollments.edit', compact('enrollment'));
+        $users = User::orderBy('name')->get();
+        return view('admin.enrollments.edit', compact('enrollment', 'users'));
     }
 
     /**
@@ -342,6 +345,9 @@ class EnrollmentController extends Controller
         $validator = Validator::make($request->all(), [
             // Photo
             'photo' => ['nullable', 'image', 'max:2048'],
+
+            // User account link
+            'user_id' => ['nullable', 'exists:users,id'],
 
             // Personal
             'rsbsa_reference_number' => ['nullable', 'string', 'max:17'],
@@ -623,6 +629,9 @@ class EnrollmentController extends Controller
         $validator = Validator::make($request->all(), [
             // Photo
             'photo' => ['nullable', 'image', 'max:2048'],
+
+            // User account link
+            'user_id' => ['nullable', 'exists:users,id'],
 
             // Personal
             'rsbsa_reference_number' => ['nullable', 'string', 'max:17'],

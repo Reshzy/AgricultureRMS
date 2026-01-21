@@ -26,6 +26,17 @@
                     </div>
                 </div>
 
+                <div>
+                    <x-label value="Link to User Account (Optional)" />
+                    <select name="user_id" class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                        <option value="">-- No user account linked --</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Select a user account if this enrollment is for a registered user</p>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div><x-label value="Surname" /><x-input name="surname" class="mt-1 w-full js-clean" required /></div>
                     <div><x-label value="First Name" /><x-input name="first_name" class="mt-1 w-full js-clean" required /></div>

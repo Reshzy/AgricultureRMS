@@ -39,12 +39,36 @@
 </div>
 
 <!-- Charts -->
-<div class="bg-white/90 rounded-2xl p-6 border border-emerald-900/5 mb-6">
-    <div class="flex items-center justify-between mb-3">
-        <h2 class="text-emerald-900 font-semibold">Enrollments by Barangay</h2>
-        <div class="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded">Top 10 Barangays</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white/90 rounded-2xl p-6 border border-emerald-900/5 lg:col-span-2">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-emerald-900 font-semibold">Enrollments by Barangay</h2>
+            <div class="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded">Top 10 Barangays</div>
+        </div>
+        <canvas id="chartFarmers" height="80"></canvas>
     </div>
-    <canvas id="chartFarmers" height="80"></canvas>
+    
+    <div class="bg-white/90 rounded-2xl p-6 border border-emerald-900/5">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-emerald-900 font-semibold">Registration Status</h2>
+            <div class="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded">All Enrollments</div>
+        </div>
+        <div class="flex flex-col items-center">
+            <div class="w-48 h-48 max-w-full">
+                <canvas id="chartRegistration"></canvas>
+            </div>
+            <div class="mt-4 flex items-center justify-center gap-6 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full bg-emerald-500"></div>
+                    <span class="text-sm text-emerald-700">Registered: {{ number_format($registeredCount) }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full bg-gray-400"></div>
+                    <span class="text-sm text-gray-600">Not Registered: {{ number_format($notRegisteredCount) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Recent Enrollments & News -->
@@ -161,6 +185,52 @@
                             beginAtZero: true,
                             ticks: {
                                 precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const ctx2 = document.getElementById('chartRegistration');
+        if (ctx2) {
+            const registeredCount = {{ $registeredCount }};
+            const notRegisteredCount = {{ $notRegisteredCount }};
+
+            new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: ['Registered', 'Not Registered'],
+                    datasets: [{
+                        data: [registeredCount, notRegisteredCount],
+                        backgroundColor: [
+                            'rgba(5,150,105,0.8)',
+                            'rgba(156,163,175,0.8)'
+                        ],
+                        borderColor: [
+                            '#059669',
+                            '#9ca3af'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
                             }
                         }
                     }
