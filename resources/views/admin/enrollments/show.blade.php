@@ -10,7 +10,7 @@
         @endif
         @if ($enrollment->photo_path)
         <div class="flex-shrink-0 flex justify-end">
-            <img src="{{ Storage::disk('public')->url($enrollment->photo_path) }}" alt="2x2 Photo" class="w-24 h-24 object-cover rounded border border-emerald-900/10 shadow-sm">
+            <img src="{{ asset('storage/' . $enrollment->photo_path) }}" alt="2x2 Photo" class="w-24 h-24 object-cover rounded border border-emerald-900/10 shadow-sm">
         </div>
         @endif
     </div>

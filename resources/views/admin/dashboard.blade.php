@@ -86,7 +86,7 @@
                     <div class="flex items-center gap-3 flex-1">
                         <div class="flex-shrink-0">
                             @if($enrollment->photo_path)
-                            <img src="{{ Storage::disk('public')->url($enrollment->photo_path) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-200">
+                            <img src="{{ asset('storage/' . $enrollment->photo_path) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-200">
                             @else
                             <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center border-2 border-emerald-200">
                                 <span class="text-emerald-700 font-medium text-sm">{{ strtoupper(substr($enrollment->first_name, 0, 1)) }}{{ strtoupper(substr($enrollment->surname, 0, 1)) }}</span>
