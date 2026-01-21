@@ -338,6 +338,81 @@
             position: relative;
             z-index: 3;
         }
+
+        /* News Section Background Icons */
+        .news-bg-icons {
+            overflow: visible;
+        }
+
+        .news-icon {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            will-change: transform;
+        }
+
+        /* Icon Positioning */
+        .news-icon.icon-1 {
+            top: 10%;
+            left: 5%;
+            transform: rotate(-15deg);
+        }
+
+        .news-icon.icon-2 {
+            top: 20%;
+            right: 8%;
+            transform: rotate(20deg);
+        }
+
+        .news-icon.icon-3 {
+            top: 50%;
+            left: 2%;
+            transform: rotate(-10deg);
+        }
+
+        .news-icon.icon-4 {
+            bottom: 15%;
+            right: 12%;
+            transform: rotate(15deg);
+        }
+
+        .news-icon.icon-5 {
+            top: 5%;
+            right: 3%;
+            transform: rotate(25deg);
+        }
+
+        .news-icon.icon-6 {
+            bottom: 25%;
+            left: 8%;
+            transform: rotate(-20deg);
+        }
+
+        .news-icon.icon-7 {
+            top: 35%;
+            right: 15%;
+            transform: rotate(10deg);
+        }
+
+        .news-icon.icon-8 {
+            bottom: 10%;
+            left: 15%;
+            transform: rotate(-25deg);
+        }
+
+        /* Responsive Sizing */
+        @media (max-width: 768px) {
+            .news-icon {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .news-icon.icon-1,
+            .news-icon.icon-3,
+            .news-icon.icon-5,
+            .news-icon.icon-8 {
+                width: 4rem;
+                height: 4rem;
+            }
+        }
     </style>
 </head>
 
@@ -501,8 +576,46 @@
     </section>
 
     <!-- Latest News Widget -->
-    <section class="py-20 relative">
-        <div class="container mx-auto px-6">
+    <section class="py-20 relative overflow-hidden">
+        <!-- Background SVG Icons Container -->
+        <div class="news-bg-icons absolute inset-0 pointer-events-none z-0">
+            <!-- News Icons -->
+            <!-- Newspaper Icon -->
+            <svg class="news-icon icon-1 absolute w-24 h-24 text-emerald-500/10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H5v-2h9v2zm5-4H5v-2h14v2zm0-4H5V7h14v2z"/>
+            </svg>
+            <!-- Megaphone Icon -->
+            <svg class="news-icon icon-2 absolute w-20 h-20 text-teal-500/10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+            <!-- Bell Icon -->
+            <svg class="news-icon icon-3 absolute w-28 h-28 text-emerald-600/8" viewBox="0 0 24 24" fill="#10b981" fill-opacity="0.5">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            <!-- Document Icon -->
+            <svg class="news-icon icon-4 absolute w-16 h-16 text-teal-600/12" viewBox="0 0 24 24" fill="#10b981" fill-opacity="0.5">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+            <!-- Agricultural Icons -->
+            <!-- Leaf Icon -->
+            <svg class="news-icon icon-5 absolute w-32 h-32 text-emerald-500/8" viewBox="0 0 24 24" fill="#10b981" fill-opacity="0.5">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1 .26 1.53.26C17.86 20.22 22 12 22 12c-1-5-4-8-5-4z"/>
+            </svg>
+            <!-- Sprout/Plant Icon -->
+            <svg class="news-icon icon-6 absolute w-22 h-22 text-teal-500/10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1 .26 1.53.26C17.86 20.22 22 12 22 12c-1-5-4-8-5-4z"/>
+            </svg>
+            <!-- Seed Icon -->
+            <svg class="news-icon icon-7 absolute w-18 h-18 text-emerald-600/10" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1" fill="none"/>
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+            </svg>
+            <!-- Growing Plant Icon -->
+            <!-- <svg class="news-icon icon-8 absolute w-26 h-26 text-teal-600/8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1 .26 1.53.26C17.86 20.22 22 12 22 12c-1-5-4-8-5-4z"/>
+            </svg> -->
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
             <div class="text-center mb-12 section-reveal">
                 <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Latest <span class="gradient-text">News</span></h2>
                 <p class="text-xl text-gray-600">Updates and advisories for our farmers</p>
@@ -607,7 +720,7 @@
         <div class="lottie-parallax-container" id="lottie-parallax">
             <dotlottie-wc
                 src="https://lottie.host/f644b568-dddb-4988-9a82-abda09d21cce/WlpgVO0cbL.lottie"
-                autoplay
+                <!-- autoplay -->
                 loop>
             </dotlottie-wc>
         </div>
@@ -1097,6 +1210,7 @@
                 updateParallax(e.scroll);
                 updateNavbar(e.scroll);
                 updateLottieParallax(e.scroll);
+                updateNewsIconsParallax(e.scroll);
             });
 
             // Animation frame for Lenis
@@ -1192,6 +1306,64 @@
                     const yPos = -(scrollY * speed);
                     element.style.transform = `translateY(${yPos}px)`;
                 });
+            }
+
+            // News section background icons parallax
+            function updateNewsIconsParallax(scrollY) {
+                const newsIconsContainer = document.querySelector('.news-bg-icons');
+                if (!newsIconsContainer) return;
+                
+                const newsSection = newsIconsContainer.closest('section');
+                if (!newsSection) return;
+
+                const rect = newsSection.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+
+                // Check if news section is in viewport
+                const isInViewport = rect.top < windowHeight && rect.bottom > 0;
+
+                if (isInViewport) {
+                    const newsIcons = document.querySelectorAll('.news-icon');
+                    const sectionTop = newsSection.offsetTop;
+                    const relativeScroll = scrollY - sectionTop;
+
+                    // Different parallax speeds for depth effect
+                    const speeds = {
+                        'icon-1': 0.3,
+                        'icon-2': 0.5,
+                        'icon-3': 0.4,
+                        'icon-4': 0.6,
+                        'icon-5': 0.35,
+                        'icon-6': 0.45,
+                        'icon-7': 0.55,
+                        'icon-8': 0.4
+                    };
+
+                    newsIcons.forEach(icon => {
+                        const iconClass = Array.from(icon.classList).find(cls => cls.startsWith('icon-'));
+                        if (iconClass && speeds[iconClass]) {
+                            const speed = speeds[iconClass];
+                            const parallaxOffset = relativeScroll * speed;
+                            
+                            // Get base rotation from computed style or default
+                            const computedStyle = window.getComputedStyle(icon);
+                            const transform = computedStyle.transform || computedStyle.webkitTransform;
+                            let baseRotation = '';
+                            
+                            // Extract rotation from CSS class (set in CSS)
+                            if (iconClass === 'icon-1') baseRotation = 'rotate(-15deg)';
+                            else if (iconClass === 'icon-2') baseRotation = 'rotate(20deg)';
+                            else if (iconClass === 'icon-3') baseRotation = 'rotate(-10deg)';
+                            else if (iconClass === 'icon-4') baseRotation = 'rotate(15deg)';
+                            else if (iconClass === 'icon-5') baseRotation = 'rotate(25deg)';
+                            else if (iconClass === 'icon-6') baseRotation = 'rotate(-20deg)';
+                            else if (iconClass === 'icon-7') baseRotation = 'rotate(10deg)';
+                            else if (iconClass === 'icon-8') baseRotation = 'rotate(-25deg)';
+                            
+                            icon.style.transform = `${baseRotation} translateY(${parallaxOffset}px)`;
+                        }
+                    });
+                }
             }
 
             // Updated navbar background change on scroll
