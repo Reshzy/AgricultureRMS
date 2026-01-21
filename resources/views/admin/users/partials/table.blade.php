@@ -33,13 +33,6 @@
                             {{ $user->is_admin ? 'Revoke Admin' : 'Grant Admin' }}
                         </button>
                     </form>
-                    @if($user->id !== auth()->id())
-                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('Delete user {{ $user->name }}? This action cannot be undone.')">
-                        @csrf
-                        @method('DELETE')
-                        <button class="text-rose-600 hover:text-rose-700" title="Delete"><i class="fa-solid fa-trash"></i></button>
-                    </form>
-                    @endif
                 </td>
             </tr>
             @empty

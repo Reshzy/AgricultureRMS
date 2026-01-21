@@ -24,10 +24,6 @@
                     <button data-view-id="{{ $e->id }}" class="text-emerald-700 hover:text-emerald-900 mr-3 viewBtn" title="View Details"><i class="fa-solid fa-eye"></i></button>
                     <a href="{{ route('admin.enrollments.pdf', $e) }}" class="text-indigo-600 hover:text-indigo-800 mr-3" title="Export PDF"><i class="fa-solid fa-file-pdf"></i></a>
                     <a href="{{ route('admin.enrollments.edit', $e) }}" class="text-blue-600 hover:text-blue-800 mr-3" title="Edit"><i class="fa-solid fa-edit"></i></a>
-                    <form method="POST" action="{{ route('admin.enrollments.destroy', $e) }}" class="inline" onsubmit="return confirm('Delete this enrollment?')">
-                        @csrf @method('DELETE')
-                        <button class="text-rose-600 hover:text-rose-700" title="Delete"><i class="fa-solid fa-trash"></i></button>
-                    </form>
                 </td>
             </tr>
             @empty

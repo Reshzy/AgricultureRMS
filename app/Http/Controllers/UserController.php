@@ -67,21 +67,5 @@ class UserController extends Controller
         $status = $request->boolean('is_admin') ? 'granted' : 'revoked';
         return back()->with('status', "Admin access {$status} for {$user->name}.");
     }
-
-    /**
-     * Remove the specified user.
-     */
-    public function destroy(Request $request, User $user)
-    {
-        // Prevent users from deleting themselves
-        if ($user->id === $request->user()->id) {
-            return back()->with('error', 'You cannot delete your own account.');
-        }
-
-        $userName = $user->name;
-        $user->delete();
-
-        return back()->with('status', "User {$userName} has been deleted.");
-    }
 }
 

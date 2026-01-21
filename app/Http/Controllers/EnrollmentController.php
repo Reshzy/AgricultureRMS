@@ -596,12 +596,6 @@ class EnrollmentController extends Controller
         return redirect()->route('admin.enrollments.index')->with('status', 'Enrollment updated');
     }
 
-    public function destroy(Enrollment $enrollment)
-    {
-        $enrollment->delete();
-        return back()->with('status', 'Enrollment deleted');
-    }
-
     public function exportPdf(Enrollment $enrollment)
     {
         $enrollment->load(['farmParcels.items']);
