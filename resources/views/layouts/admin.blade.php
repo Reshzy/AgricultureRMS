@@ -57,6 +57,10 @@
             box-shadow: 0 14px 30px rgba(2, 44, 34, .15);
         }
 
+        .no-transition {
+            transition: none !important;
+        }
+
         .scrollbar::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -113,16 +117,46 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Sidebar toggle
             const toggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             const main = document.getElementById('main');
+            const sidebarStateKey = 'adminSidebarCollapsed';
+
+            sidebar?.classList.add('no-transition');
+            main?.classList.add('no-transition');
+
+            const applySidebarState = (collapsed) => {
+                if (!sidebar || !main) {
+                    return;
+                }
+
+                if (collapsed) {
+                    sidebar.classList.remove('w-72');
+                    sidebar.classList.add('w-20', 'collapsed');
+                    main.classList.remove('ml-72');
+                    main.classList.add('ml-20');
+                } else {
+                    sidebar.classList.remove('w-20', 'collapsed');
+                    sidebar.classList.add('w-72');
+                    main.classList.remove('ml-20');
+                    main.classList.add('ml-72');
+                }
+            };
+
+            const savedSidebarState = localStorage.getItem(sidebarStateKey);
+            if (savedSidebarState !== null) {
+                applySidebarState(savedSidebarState === 'true');
+            }
+
+            requestAnimationFrame(() => {
+                sidebar?.classList.remove('no-transition');
+                main?.classList.remove('no-transition');
+            });
+
             toggle?.addEventListener('click', () => {
-                sidebar.classList.toggle('w-72');
-                sidebar.classList.toggle('w-20');
-                sidebar.classList.toggle('collapsed');
-                main.classList.toggle('ml-72');
-                main.classList.toggle('ml-20');
+                const nextState = !(sidebar?.classList.contains('collapsed'));
+                applySidebarState(nextState);
+                localStorage.setItem(sidebarStateKey, String(nextState));
             });
 
             // Profile dropdown toggle
