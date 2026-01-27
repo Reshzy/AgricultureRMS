@@ -524,7 +524,7 @@
 
                     <div class="flex items-center space-x-8 pt-8">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-gray-900">1,250+</div>
+                            <div class="text-2xl font-bold text-gray-900">{{ number_format($activeFarmers) }}+</div>
                             <div class="text-gray-600 text-sm">Active Farmers</div>
                         </div>
                         <div class="w-px h-12 bg-gray-300"></div>
@@ -554,7 +554,7 @@
                             </div>
                             <div>
                                 <div class="text-sm font-semibold text-gray-900">Growth Rate</div>
-                                <div class="text-emerald-600 font-bold">+23.5%</div>
+                                <div class="text-emerald-600 font-bold">{{ $growthRate >= 0 ? '+' : '' }}{{ number_format($growthRate, 1) }}%</div>
                             </div>
                         </div>
                     </div>
@@ -566,7 +566,7 @@
                             </div>
                             <div>
                                 <div class="text-sm font-semibold text-white">New Farmers</div>
-                                <div class="text-white font-bold">+847</div>
+                                <div class="text-white font-bold">+{{ number_format($newFarmers) }}</div>
                             </div>
                         </div>
                     </div>
