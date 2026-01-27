@@ -389,6 +389,7 @@ class EnrollmentController extends Controller
             'has_government_id' => ['nullable', 'boolean'],
             'government_id_type' => ['nullable', 'string', 'max:255'],
             'government_id_number' => ['nullable', 'string', 'max:255'],
+            'has_insurance_registered' => ['nullable', 'boolean'],
 
             // Emergency
             'emergency_contact_name' => ['nullable', 'string', 'max:255'],
@@ -460,7 +461,7 @@ class EnrollmentController extends Controller
         $validated = $validator->validate();
 
         // Ensure unchecked checkboxes become false on update
-        foreach (['household_head', 'is_pwd', 'is_four_ps_beneficiary', 'is_indigenous_group_member', 'has_government_id'] as $bf) {
+        foreach (['household_head', 'is_pwd', 'is_four_ps_beneficiary', 'is_indigenous_group_member', 'has_government_id', 'has_insurance_registered'] as $bf) {
             $validated[$bf] = $request->boolean($bf);
         }
 
@@ -665,6 +666,7 @@ class EnrollmentController extends Controller
             'has_government_id' => ['nullable', 'boolean'],
             'government_id_type' => ['nullable', 'string', 'max:255'],
             'government_id_number' => ['nullable', 'string', 'max:255'],
+            'has_insurance_registered' => ['nullable', 'boolean'],
 
             // Emergency
             'emergency_contact_name' => ['nullable', 'string', 'max:255'],
@@ -734,6 +736,11 @@ class EnrollmentController extends Controller
         });
 
         $validated = $validator->validate();
+
+        // Ensure unchecked checkboxes become false
+        foreach (['household_head', 'is_pwd', 'is_four_ps_beneficiary', 'is_indigenous_group_member', 'has_government_id', 'has_insurance_registered'] as $bf) {
+            $validated[$bf] = $request->boolean($bf);
+        }
 
         // Ensure numeric member counts default to 0 when omitted
         foreach (['household_members_total', 'household_members_male', 'household_members_female'] as $numField) {

@@ -50,7 +50,7 @@
     
     <div class="bg-white/90 rounded-2xl p-6 border border-emerald-900/5">
         <div class="flex items-center justify-between mb-3">
-            <h2 class="text-emerald-900 font-semibold">Registration Status</h2>
+            <h2 class="text-emerald-900 font-semibold">Insurance Registration</h2>
             <div class="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded">All Enrollments</div>
         </div>
         <div class="flex flex-col items-center">
@@ -60,11 +60,11 @@
             <div class="mt-4 flex items-center justify-center gap-6 flex-wrap">
                 <div class="flex items-center gap-2">
                     <div class="w-4 h-4 rounded-full bg-emerald-500"></div>
-                    <span class="text-sm text-emerald-700">Registered: {{ number_format($registeredCount) }}</span>
+                    <span class="text-sm text-emerald-700">With Insurance: {{ number_format($withInsuranceCount) }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="w-4 h-4 rounded-full bg-gray-400"></div>
-                    <span class="text-sm text-gray-600">Not Registered: {{ number_format($notRegisteredCount) }}</span>
+                    <span class="text-sm text-gray-600">Without Insurance: {{ number_format($withoutInsuranceCount) }}</span>
                 </div>
             </div>
         </div>
@@ -194,15 +194,15 @@
 
         const ctx2 = document.getElementById('chartRegistration');
         if (ctx2) {
-            const registeredCount = {{ $registeredCount }};
-            const notRegisteredCount = {{ $notRegisteredCount }};
+            const withInsuranceCount = {{ $withInsuranceCount }};
+            const withoutInsuranceCount = {{ $withoutInsuranceCount }};
 
             new Chart(ctx2, {
                 type: 'pie',
                 data: {
-                    labels: ['Registered', 'Not Registered'],
+                    labels: ['With Insurance', 'Without Insurance'],
                     datasets: [{
-                        data: [registeredCount, notRegisteredCount],
+                        data: [withInsuranceCount, withoutInsuranceCount],
                         backgroundColor: [
                             'rgba(5,150,105,0.8)',
                             'rgba(156,163,175,0.8)'
