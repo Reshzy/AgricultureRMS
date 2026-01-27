@@ -75,8 +75,7 @@ class EnrollmentController extends Controller
 
     public function create()
     {
-        $users = User::orderBy('name')->get();
-        return view('admin.enrollments.create', compact('users'));
+        return view('admin.enrollments.create');
     }
 
     public function show(Enrollment $enrollment)
@@ -95,8 +94,7 @@ class EnrollmentController extends Controller
     public function edit(Enrollment $enrollment)
     {
         $enrollment->load(['farmParcels.items']);
-        $users = User::orderBy('name')->get();
-        return view('admin.enrollments.edit', compact('enrollment', 'users'));
+        return view('admin.enrollments.edit', compact('enrollment'));
     }
 
     /**
@@ -345,9 +343,6 @@ class EnrollmentController extends Controller
         $validator = Validator::make($request->all(), [
             // Photo
             'photo' => ['nullable', 'image', 'max:2048'],
-
-            // User account link
-            'user_id' => ['nullable', 'exists:users,id'],
 
             // Personal
             'rsbsa_reference_number' => ['nullable', 'string', 'max:17'],
@@ -623,9 +618,6 @@ class EnrollmentController extends Controller
         $validator = Validator::make($request->all(), [
             // Photo
             'photo' => ['nullable', 'image', 'max:2048'],
-
-            // User account link
-            'user_id' => ['nullable', 'exists:users,id'],
 
             // Personal
             'rsbsa_reference_number' => ['nullable', 'string', 'max:17'],

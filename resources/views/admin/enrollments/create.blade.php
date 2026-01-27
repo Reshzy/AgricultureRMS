@@ -40,14 +40,8 @@
                 </div>
 
                 <div>
-                    <x-label value="Link to User Account (Optional)" />
-                    <select name="user_id" class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
-                        <option value="">-- No user account linked --</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                        @endforeach
-                    </select>
-                    <p class="mt-1 text-xs text-gray-500">Select a user account if this enrollment is for a registered user</p>
+                    <label class="inline-flex items-center"><input type="checkbox" name="has_insurance_registered" value="1" class="text-emerald-600"><span class="ml-2">Insurance Registration</span></label>
+                    <p class="mt-1 text-xs text-gray-500">Check if this enrollment is for a user who was registered with insurance</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

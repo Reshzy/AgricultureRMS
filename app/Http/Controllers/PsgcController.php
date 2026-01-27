@@ -12,7 +12,11 @@ class PsgcController extends Controller
     {
         try {
             $data = Cache::remember('psgc:regions', 86400, function () {
-                $res = Http::timeout(10)->get('https://psgc.gitlab.io/api/regions/');
+                $client = Http::timeout(10);
+                if (in_array(config('app.env'), ['local', 'testing'])) {
+                    $client = $client->withoutVerifying();
+                }
+                $res = $client->get('https://psgc.gitlab.io/api/regions/');
                 $res->throw();
                 return $res->json();
             });
@@ -27,7 +31,11 @@ class PsgcController extends Controller
         try {
             $key = "psgc:region:$regionCode:provinces";
             $data = Cache::remember($key, 86400, function () use ($regionCode) {
-                $res = Http::timeout(10)->get("https://psgc.gitlab.io/api/regions/{$regionCode}/provinces/");
+                $client = Http::timeout(10);
+                if (in_array(config('app.env'), ['local', 'testing'])) {
+                    $client = $client->withoutVerifying();
+                }
+                $res = $client->get("https://psgc.gitlab.io/api/regions/{$regionCode}/provinces/");
                 $res->throw();
                 return $res->json();
             });
@@ -42,7 +50,11 @@ class PsgcController extends Controller
         try {
             $key = "psgc:province:$provinceCode:cities";
             $data = Cache::remember($key, 86400, function () use ($provinceCode) {
-                $res = Http::timeout(10)->get("https://psgc.gitlab.io/api/provinces/{$provinceCode}/cities-municipalities/");
+                $client = Http::timeout(10);
+                if (in_array(config('app.env'), ['local', 'testing'])) {
+                    $client = $client->withoutVerifying();
+                }
+                $res = $client->get("https://psgc.gitlab.io/api/provinces/{$provinceCode}/cities-municipalities/");
                 $res->throw();
                 return $res->json();
             });
@@ -57,7 +69,11 @@ class PsgcController extends Controller
         try {
             $key = "psgc:city:$cityCode:barangays";
             $data = Cache::remember($key, 86400, function () use ($cityCode) {
-                $res = Http::timeout(10)->get("https://psgc.gitlab.io/api/cities-municipalities/{$cityCode}/barangays/");
+                $client = Http::timeout(10);
+                if (in_array(config('app.env'), ['local', 'testing'])) {
+                    $client = $client->withoutVerifying();
+                }
+                $res = $client->get("https://psgc.gitlab.io/api/cities-municipalities/{$cityCode}/barangays/");
                 $res->throw();
                 return $res->json();
             });

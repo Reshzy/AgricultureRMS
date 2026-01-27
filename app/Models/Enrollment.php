@@ -13,6 +13,7 @@ class Enrollment extends Model
 
     protected $fillable = [
         'user_id',
+        'has_insurance_registered',
         'photo_path',
         'rsbsa_reference_number',
         'surname',
@@ -79,6 +80,7 @@ class Enrollment extends Model
         'is_four_ps_beneficiary' => 'boolean',
         'is_indigenous_group_member' => 'boolean',
         'has_government_id' => 'boolean',
+        'has_insurance_registered' => 'boolean',
         'farming_activities' => 'array',
         'farmworker_kinds_of_work' => 'array',
         'fishing_activities' => 'array',
