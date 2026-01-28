@@ -467,11 +467,6 @@
                     <a href="{{ route('login') }}" class="px-6 py-2.5 text-gray-700 font-semibold hover:text-emerald-600 transition-all duration-300">
                         Login
                     </a>
-                    @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn-primary px-6 py-2.5 text-white font-semibold rounded-full">
-                        Get Started
-                    </a>
-                    @endif
                     @endauth
 
                     <button class="lg:hidden p-2 text-gray-600 hover:text-emerald-600 transition-colors">
@@ -511,8 +506,8 @@
                         </a>
                         @else
                         <a href="{{ route('register') }}" class="btn-primary px-8 py-4 text-white font-semibold rounded-2xl text-lg inline-flex items-center justify-center group">
-                            <span>Start Your Journey</span>
-                            <i class="fas fa-rocket ml-2 transition-transform group-hover:translate-x-1"></i>
+                            <span>Apply Claims</span>
+                            <i class="fas fa-file-signature ml-2 transition-transform group-hover:translate-x-1"></i>
                         </a>
                         @endauth
 
@@ -1182,6 +1177,11 @@
                 <div class="flex space-x-6">
                     <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Privacy Policy</a>
                     <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Terms of Service</a>
+                    @guest
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Get Started</a>
+                        @endif
+                    @endguest
                 </div>
             </div>
         </div>

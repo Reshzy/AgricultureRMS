@@ -184,11 +184,6 @@
                     <a href="{{ route('login') }}" class="px-6 py-2.5 text-gray-700 font-semibold hover:text-emerald-600 transition-all duration-300">
                         Login
                     </a>
-                    @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="btn-primary px-6 py-2.5 text-white font-semibold rounded-full">
-                        Get Started
-                    </a>
-                    @endif
                     @endauth
 
                     <button class="lg:hidden p-2 text-gray-600 hover:text-emerald-600 transition-colors">
