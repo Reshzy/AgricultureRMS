@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Enrollment;
-use App\Models\FarmParcel;
 use App\Models\FarmParcelHistory;
 use App\Models\FarmParcelItemHistory;
-use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
 class EnrollmentController extends Controller
@@ -24,6 +21,18 @@ class EnrollmentController extends Controller
         $livelihood = $request->input('livelihood');
         $status = $request->input('status');
         $parcel = trim((string) $request->input('parcel'));
+        $insurance = $request->input('insurance');
+        $sex = $request->input('sex');
+        $mobile = trim((string) $request->input('mobile'));
+        $landline = trim((string) $request->input('landline'));
+        $education = $request->input('education');
+        $religion = trim((string) $request->input('religion'));
+        $civilStatus = $request->input('civil_status');
+        $householdHead = $request->input('household_head');
+        $pwd = $request->input('pwd');
+        $fourPs = $request->input('four_ps');
+        $indigenous = $request->input('indigenous');
+        $governmentId = $request->input('government_id');
         $perPage = (int) $request->input('per_page', 15);
         if (! in_array($perPage, [10, 15, 25, 50, 100])) {
             $perPage = 15;
@@ -55,6 +64,42 @@ class EnrollmentController extends Controller
                     ->orWhere('farm_type', 'like', "%{$parcel}%");
             });
         }
+        if ($insurance !== null && $insurance !== '') {
+            $query->where('has_insurance_registered', (bool) $insurance);
+        }
+        if ($sex !== null && $sex !== '' && in_array($sex, ['male', 'female'])) {
+            $query->where('sex', $sex);
+        }
+        if ($mobile !== '') {
+            $query->where('mobile_number', 'like', "%{$mobile}%");
+        }
+        if ($landline !== '') {
+            $query->where('landline_number', 'like', "%{$landline}%");
+        }
+        if ($education !== null && $education !== '') {
+            $query->where('highest_formal_education', $education);
+        }
+        if ($religion !== '') {
+            $query->where('religion', 'like', "%{$religion}%");
+        }
+        if ($civilStatus !== null && $civilStatus !== '' && in_array($civilStatus, ['single', 'married', 'widowed', 'separated'])) {
+            $query->where('civil_status', $civilStatus);
+        }
+        if ($householdHead !== null && $householdHead !== '') {
+            $query->where('household_head', (bool) $householdHead);
+        }
+        if ($pwd !== null && $pwd !== '') {
+            $query->where('is_pwd', (bool) $pwd);
+        }
+        if ($fourPs !== null && $fourPs !== '') {
+            $query->where('is_four_ps_beneficiary', (bool) $fourPs);
+        }
+        if ($indigenous !== null && $indigenous !== '') {
+            $query->where('is_indigenous_group_member', (bool) $indigenous);
+        }
+        if ($governmentId !== null && $governmentId !== '') {
+            $query->where('has_government_id', (bool) $governmentId);
+        }
 
         $enrollments = $query->orderByDesc('created_at')->paginate($perPage)->appends($request->except('page'));
 
@@ -70,7 +115,28 @@ class EnrollmentController extends Controller
             return view('admin.enrollments.partials.table', compact('enrollments'));
         }
 
-        return view('admin.enrollments.index', compact('enrollments', 'name', 'barangay', 'livelihood', 'status', 'parcel', 'perPage', 'barangays'));
+        return view('admin.enrollments.index', compact(
+            'enrollments',
+            'name',
+            'barangay',
+            'livelihood',
+            'status',
+            'parcel',
+            'insurance',
+            'sex',
+            'mobile',
+            'landline',
+            'education',
+            'religion',
+            'civilStatus',
+            'householdHead',
+            'pwd',
+            'fourPs',
+            'indigenous',
+            'governmentId',
+            'perPage',
+            'barangays'
+        ));
     }
 
     public function create()
@@ -88,12 +154,14 @@ class EnrollmentController extends Controller
             ->groupBy(function ($history) {
                 return $history->changed_at->format('Y-m-d H:i:s');
             });
+
         return view('admin.enrollments.show', compact('enrollment', 'histories'));
     }
 
     public function edit(Enrollment $enrollment)
     {
         $enrollment->load(['farmParcels.items']);
+
         return view('admin.enrollments.edit', compact('enrollment'));
     }
 
@@ -123,7 +191,7 @@ class EnrollmentController extends Controller
                 'remarks' => $parcel['remarks'] ?? null,
                 'items' => [],
             ];
-            
+
             foreach (($parcel['items'] ?? []) as $item) {
                 $p['items'][] = [
                     'kind' => $item['kind'] ?? null,
@@ -137,6 +205,7 @@ class EnrollmentController extends Controller
             }
             $normalized[] = $p;
         }
+
         return $normalized;
     }
 
@@ -147,13 +216,13 @@ class EnrollmentController extends Controller
     {
         $oldJson = json_encode($oldParcels, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $newJson = json_encode($newParcels, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        
+
         if ($oldJson === $newJson) {
             return null; // No changes
         }
 
         $changes = [];
-        
+
         // Compare parcel count
         if (count($oldParcels) !== count($newParcels)) {
             $changes[] = [
@@ -169,7 +238,7 @@ class EnrollmentController extends Controller
         for ($i = 0; $i < $maxCount; $i++) {
             $oldParcel = $oldParcels[$i] ?? null;
             $newParcel = $newParcels[$i] ?? null;
-            
+
             if ($oldParcel === null) {
                 $changes[] = [
                     'type' => 'parcel_added',
@@ -178,9 +247,10 @@ class EnrollmentController extends Controller
                     'old' => null,
                     'new' => 'New parcel added',
                 ];
+
                 continue;
             }
-            
+
             if ($newParcel === null) {
                 $changes[] = [
                     'type' => 'parcel_removed',
@@ -189,6 +259,7 @@ class EnrollmentController extends Controller
                     'old' => 'Parcel removed',
                     'new' => null,
                 ];
+
                 continue;
             }
 
@@ -204,13 +275,21 @@ class EnrollmentController extends Controller
             foreach ($parcelFields as $field) {
                 $oldVal = $oldParcel[$field] ?? null;
                 $newVal = $newParcel[$field] ?? null;
-                
+
                 // Normalize for comparison
-                if (is_numeric($oldVal)) $oldVal = (float) $oldVal;
-                if (is_numeric($newVal)) $newVal = (float) $newVal;
-                if (is_bool($oldVal)) $oldVal = $oldVal ? 1 : 0;
-                if (is_bool($newVal)) $newVal = $newVal ? 1 : 0;
-                
+                if (is_numeric($oldVal)) {
+                    $oldVal = (float) $oldVal;
+                }
+                if (is_numeric($newVal)) {
+                    $newVal = (float) $newVal;
+                }
+                if (is_bool($oldVal)) {
+                    $oldVal = $oldVal ? 1 : 0;
+                }
+                if (is_bool($newVal)) {
+                    $newVal = $newVal ? 1 : 0;
+                }
+
                 if ($oldVal !== $newVal) {
                     $changes[] = [
                         'type' => 'field_change',
@@ -225,7 +304,7 @@ class EnrollmentController extends Controller
             // Compare items
             $oldItems = $oldParcel['items'] ?? [];
             $newItems = $newParcel['items'] ?? [];
-            
+
             if (count($oldItems) !== count($newItems)) {
                 $changes[] = [
                     'type' => 'item_count',
@@ -240,7 +319,7 @@ class EnrollmentController extends Controller
             for ($j = 0; $j < $itemMaxCount; $j++) {
                 $oldItem = $oldItems[$j] ?? null;
                 $newItem = $newItems[$j] ?? null;
-                
+
                 if ($oldItem === null || $newItem === null) {
                     continue; // Item added/removed, already tracked by count
                 }
@@ -249,12 +328,20 @@ class EnrollmentController extends Controller
                 foreach ($itemFields as $field) {
                     $oldVal = $oldItem[$field] ?? null;
                     $newVal = $newItem[$field] ?? null;
-                    
-                    if (is_numeric($oldVal)) $oldVal = (float) $oldVal;
-                    if (is_numeric($newVal)) $newVal = (float) $newVal;
-                    if (is_bool($oldVal)) $oldVal = $oldVal ? 1 : 0;
-                    if (is_bool($newVal)) $newVal = $newVal ? 1 : 0;
-                    
+
+                    if (is_numeric($oldVal)) {
+                        $oldVal = (float) $oldVal;
+                    }
+                    if (is_numeric($newVal)) {
+                        $newVal = (float) $newVal;
+                    }
+                    if (is_bool($oldVal)) {
+                        $oldVal = $oldVal ? 1 : 0;
+                    }
+                    if (is_bool($newVal)) {
+                        $newVal = $newVal ? 1 : 0;
+                    }
+
                     if ($oldVal !== $newVal) {
                         $changes[] = [
                             'type' => 'item_field_change',
@@ -284,7 +371,7 @@ class EnrollmentController extends Controller
         foreach ($enrollment->farmParcels as $parcel) {
             $parcelData = $parcel->toArray();
             unset($parcelData['id'], $parcelData['enrollment_id'], $parcelData['created_at'], $parcelData['updated_at']);
-            
+
             $history = FarmParcelHistory::create([
                 'farm_parcel_id' => $parcel->id,
                 'enrollment_id' => $enrollment->id,
@@ -451,7 +538,7 @@ class EnrollmentController extends Controller
             $t = $request->integer('household_members_total');
             $m = $request->integer('household_members_male');
             $f = $request->integer('household_members_female');
-            if (!is_null($t) && (!is_null($m) || !is_null($f))) {
+            if (! is_null($t) && (! is_null($m) || ! is_null($f))) {
                 if ($t !== (($m ?? 0) + ($f ?? 0))) {
                     $validator->errors()->add('household_members_total', 'Total members must equal male + female.');
                 }
@@ -467,7 +554,7 @@ class EnrollmentController extends Controller
 
         // Ensure numeric member counts default to 0 when omitted
         foreach (['household_members_total', 'household_members_male', 'household_members_female'] as $numField) {
-            if (!array_key_exists($numField, $validated) || is_null($validated[$numField])) {
+            if (! array_key_exists($numField, $validated) || is_null($validated[$numField])) {
                 $validated[$numField] = 0;
             }
         }
@@ -487,6 +574,7 @@ class EnrollmentController extends Controller
             $items = array_values(array_unique(array_filter(array_map(function ($v) use ($toTitleCase) {
                 return $toTitleCase((string) $v);
             }, $items))));
+
             return count($items) ? implode(', ', $items) : null;
         };
 
@@ -558,13 +646,14 @@ class EnrollmentController extends Controller
                     $parcelData['items'] = $parcel->items->map(function ($item) {
                         return $item->toArray();
                     })->toArray();
+
                     return $parcelData;
                 })->toArray()
             );
-            
+
             $newParcels = $this->normalizeParcelData($validated['parcels'] ?? []);
             $changes = $this->compareParcelData($oldParcels, $newParcels);
-            
+
             // Save history if parcel data changed
             if ($changes !== null && count($changes) > 0 && $enrollment->farmParcels->count() > 0) {
                 $this->saveParcelHistory($enrollment, $changes);
@@ -598,7 +687,7 @@ class EnrollmentController extends Controller
 
         $pdf = PDF::loadView('admin.enrollments.pdf', compact('enrollment'));
 
-        $filename = 'enrollment_' . $enrollment->surname . '_' . $enrollment->first_name . '_' . now()->format('Ymd') . '.pdf';
+        $filename = 'enrollment_'.$enrollment->surname.'_'.$enrollment->first_name.'_'.now()->format('Ymd').'.pdf';
 
         return $pdf->download($filename);
     }
@@ -728,7 +817,7 @@ class EnrollmentController extends Controller
             $t = $request->integer('household_members_total');
             $m = $request->integer('household_members_male');
             $f = $request->integer('household_members_female');
-            if (!is_null($t) && (!is_null($m) || !is_null($f))) {
+            if (! is_null($t) && (! is_null($m) || ! is_null($f))) {
                 if ($t !== (($m ?? 0) + ($f ?? 0))) {
                     $validator->errors()->add('household_members_total', 'Total members must equal male + female.');
                 }
@@ -744,7 +833,7 @@ class EnrollmentController extends Controller
 
         // Ensure numeric member counts default to 0 when omitted
         foreach (['household_members_total', 'household_members_male', 'household_members_female'] as $numField) {
-            if (!array_key_exists($numField, $validated) || is_null($validated[$numField])) {
+            if (! array_key_exists($numField, $validated) || is_null($validated[$numField])) {
                 $validated[$numField] = 0;
             }
         }
@@ -763,6 +852,7 @@ class EnrollmentController extends Controller
             $items = array_values(array_unique(array_filter(array_map(function ($v) use ($toTitleCase) {
                 return $toTitleCase((string) $v);
             }, $items))));
+
             return count($items) ? implode(', ', $items) : null;
         };
 

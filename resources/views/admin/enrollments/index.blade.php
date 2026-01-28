@@ -51,6 +51,65 @@
             </select>
             <button id="resetFilters" class="px-3 py-2 rounded-lg border text-sm">Reset</button>
         </div>
+        <button id="toggleAdvancedFilters" type="button" class="mt-3 w-full px-3 py-2 rounded-lg border border-emerald-900/10 bg-emerald-50/50 hover:bg-emerald-50 text-emerald-900 text-sm transition-colors flex items-center justify-between" aria-expanded="false" aria-controls="advancedFiltersContainer">
+            <span class="font-medium">Advanced Filters</span>
+            <i class="fa-solid fa-chevron-down transition-transform duration-300" id="toggleIcon"></i>
+        </button>
+        <div id="advancedFiltersContainer" class="hidden mt-3 pt-3 border-t border-emerald-900/10 transition-all duration-300" aria-labelledby="toggleAdvancedFilters">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                <select id="filterInsurance" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All insurance</option>
+                    <option value="1" {{ ($insurance ?? '')==='1' ? 'selected':'' }}>Yes</option>
+                    <option value="0" {{ ($insurance ?? '')==='0' ? 'selected':'' }}>No</option>
+                </select>
+                <select id="filterSex" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All sex</option>
+                    <option value="male" {{ ($sex ?? '')==='male' ? 'selected':'' }}>Male</option>
+                    <option value="female" {{ ($sex ?? '')==='female' ? 'selected':'' }}>Female</option>
+                </select>
+                <input id="filterMobile" type="text" value="{{ $mobile ?? '' }}" placeholder="Mobile number..." class="px-3 py-2 rounded-lg border text-sm" />
+                <input id="filterLandline" type="text" value="{{ $landline ?? '' }}" placeholder="Landline number..." class="px-3 py-2 rounded-lg border text-sm" />
+                <select id="filterEducation" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All education</option>
+                    @foreach(['Pre-school','Elementary','High school (non-K-12)','Junior High school (K-12)','Senior High school (K-12)','College','Vocational','Post graduate','None'] as $opt)
+                    <option value="{{ $opt }}" {{ ($education ?? '')===$opt ? 'selected':'' }}>{{ $opt }}</option>
+                    @endforeach
+                </select>
+                <input id="filterReligion" type="text" value="{{ $religion ?? '' }}" placeholder="Religion..." class="px-3 py-2 rounded-lg border text-sm" />
+                <select id="filterCivilStatus" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All civil status</option>
+                    <option value="single" {{ ($civilStatus ?? '')==='single' ? 'selected':'' }}>Single</option>
+                    <option value="married" {{ ($civilStatus ?? '')==='married' ? 'selected':'' }}>Married</option>
+                    <option value="widowed" {{ ($civilStatus ?? '')==='widowed' ? 'selected':'' }}>Widowed</option>
+                    <option value="separated" {{ ($civilStatus ?? '')==='separated' ? 'selected':'' }}>Separated</option>
+                </select>
+                <select id="filterHouseholdHead" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All household head</option>
+                    <option value="1" {{ ($householdHead ?? '')==='1' ? 'selected':'' }}>Yes</option>
+                    <option value="0" {{ ($householdHead ?? '')==='0' ? 'selected':'' }}>No</option>
+                </select>
+                <select id="filterPwd" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All PWD</option>
+                    <option value="1" {{ ($pwd ?? '')==='1' ? 'selected':'' }}>Yes</option>
+                    <option value="0" {{ ($pwd ?? '')==='0' ? 'selected':'' }}>No</option>
+                </select>
+                <select id="filterFourPs" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All 4P's</option>
+                    <option value="1" {{ ($fourPs ?? '')==='1' ? 'selected':'' }}>Yes</option>
+                    <option value="0" {{ ($fourPs ?? '')==='0' ? 'selected':'' }}>No</option>
+                </select>
+                <select id="filterIndigenous" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All indigenous</option>
+                    <option value="1" {{ ($indigenous ?? '')==='1' ? 'selected':'' }}>Yes</option>
+                    <option value="0" {{ ($indigenous ?? '')==='0' ? 'selected':'' }}>No</option>
+                </select>
+                <select id="filterGovernmentId" class="px-3 py-2 rounded-lg border text-sm">
+                    <option value="">All Gov't ID</option>
+                    <option value="1" {{ ($governmentId ?? '')==='1' ? 'selected':'' }}>Yes</option>
+                    <option value="0" {{ ($governmentId ?? '')==='0' ? 'selected':'' }}>No</option>
+                </select>
+            </div>
+        </div>
     </div>
     <div id="tableWrap">
         @include('admin.enrollments.partials.table', ['enrollments' => $enrollments])
@@ -85,8 +144,60 @@
         const parcelI = document.getElementById('filterParcel');
         const livI = document.getElementById('filterLivelihood');
         const statusI = document.getElementById('filterStatus');
+        const insuranceI = document.getElementById('filterInsurance');
+        const sexI = document.getElementById('filterSex');
+        const mobileI = document.getElementById('filterMobile');
+        const landlineI = document.getElementById('filterLandline');
+        const educationI = document.getElementById('filterEducation');
+        const religionI = document.getElementById('filterReligion');
+        const civilStatusI = document.getElementById('filterCivilStatus');
+        const householdHeadI = document.getElementById('filterHouseholdHead');
+        const pwdI = document.getElementById('filterPwd');
+        const fourPsI = document.getElementById('filterFourPs');
+        const indigenousI = document.getElementById('filterIndigenous');
+        const governmentIdI = document.getElementById('filterGovernmentId');
         const perPageI = document.getElementById('perPage');
         const resetBtn = document.getElementById('resetFilters');
+        const toggleAdvancedBtn = document.getElementById('toggleAdvancedFilters');
+        const advancedFiltersContainer = document.getElementById('advancedFiltersContainer');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const advancedFiltersStateKey = 'enrollmentsAdvancedFiltersVisible';
+
+        // Advanced Filters Toggle Functionality
+        const applyAdvancedFiltersState = (visible) => {
+            if (!advancedFiltersContainer || !toggleIcon || !toggleAdvancedBtn) {
+                return;
+            }
+
+            if (visible) {
+                advancedFiltersContainer.classList.remove('hidden');
+                toggleIcon.classList.remove('fa-chevron-down');
+                toggleIcon.classList.add('fa-chevron-up');
+                toggleAdvancedBtn.setAttribute('aria-expanded', 'true');
+            } else {
+                advancedFiltersContainer.classList.add('hidden');
+                toggleIcon.classList.remove('fa-chevron-up');
+                toggleIcon.classList.add('fa-chevron-down');
+                toggleAdvancedBtn.setAttribute('aria-expanded', 'false');
+            }
+        };
+
+        // Initialize advanced filters state from localStorage
+        const savedAdvancedFiltersState = localStorage.getItem(advancedFiltersStateKey);
+        if (savedAdvancedFiltersState !== null) {
+            applyAdvancedFiltersState(savedAdvancedFiltersState === 'true');
+        } else {
+            // Default to hidden if no saved state
+            applyAdvancedFiltersState(false);
+        }
+
+        // Toggle advanced filters on button click
+        toggleAdvancedBtn?.addEventListener('click', () => {
+            const isCurrentlyVisible = !advancedFiltersContainer.classList.contains('hidden');
+            const nextState = !isCurrentlyVisible;
+            applyAdvancedFiltersState(nextState);
+            localStorage.setItem(advancedFiltersStateKey, String(nextState));
+        });
 
         closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
         modal?.addEventListener('click', (e) => {
@@ -172,6 +283,18 @@
             if (parcelI.value.trim()) p.set('parcel', parcelI.value.trim());
             if (livI.value) p.set('livelihood', livI.value);
             if (statusI.value) p.set('status', statusI.value);
+            if (insuranceI.value) p.set('insurance', insuranceI.value);
+            if (sexI.value) p.set('sex', sexI.value);
+            if (mobileI.value.trim()) p.set('mobile', mobileI.value.trim());
+            if (landlineI.value.trim()) p.set('landline', landlineI.value.trim());
+            if (educationI.value) p.set('education', educationI.value);
+            if (religionI.value.trim()) p.set('religion', religionI.value.trim());
+            if (civilStatusI.value) p.set('civil_status', civilStatusI.value);
+            if (householdHeadI.value) p.set('household_head', householdHeadI.value);
+            if (pwdI.value) p.set('pwd', pwdI.value);
+            if (fourPsI.value) p.set('four_ps', fourPsI.value);
+            if (indigenousI.value) p.set('indigenous', indigenousI.value);
+            if (governmentIdI.value) p.set('government_id', governmentIdI.value);
             p.set('per_page', perPageI.value || '15');
             if (page) p.set('page', page);
             return p.toString();
@@ -196,6 +319,18 @@
         parcelI.addEventListener('input', refresh);
         livI.addEventListener('change', refresh);
         statusI.addEventListener('change', refresh);
+        insuranceI.addEventListener('change', refresh);
+        sexI.addEventListener('change', refresh);
+        mobileI.addEventListener('input', refresh);
+        landlineI.addEventListener('input', refresh);
+        educationI.addEventListener('change', refresh);
+        religionI.addEventListener('input', refresh);
+        civilStatusI.addEventListener('change', refresh);
+        householdHeadI.addEventListener('change', refresh);
+        pwdI.addEventListener('change', refresh);
+        fourPsI.addEventListener('change', refresh);
+        indigenousI.addEventListener('change', refresh);
+        governmentIdI.addEventListener('change', refresh);
         perPageI.addEventListener('change', () => loadTableWithParams(buildParams(1)));
         resetBtn.addEventListener('click', () => {
             nameI.value = '';
@@ -203,6 +338,18 @@
             parcelI.value = '';
             livI.value = '';
             statusI.value = '';
+            insuranceI.value = '';
+            sexI.value = '';
+            mobileI.value = '';
+            landlineI.value = '';
+            educationI.value = '';
+            religionI.value = '';
+            civilStatusI.value = '';
+            householdHeadI.value = '';
+            pwdI.value = '';
+            fourPsI.value = '';
+            indigenousI.value = '';
+            governmentIdI.value = '';
             loadTableWithParams(buildParams(1));
         });
 
