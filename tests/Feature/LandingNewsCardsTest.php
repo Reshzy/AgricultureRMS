@@ -35,6 +35,7 @@ class LandingNewsCardsTest extends TestCase
             ->assertSee($news->title)
             ->assertSee('Technology')
             ->assertSee('Advisory')
+            ->assertSee('news-tether')
             ->assertSee($expectedSnippet);
     }
 }

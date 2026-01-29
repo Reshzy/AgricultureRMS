@@ -619,11 +619,19 @@
                 @php($latestNews = \App\Models\News::where('status','published')->whereNotNull('published_at')->where('published_at','<=', now())->orderByDesc('published_at')->limit(3)->get())
                     @forelse ($latestNews as $item)
                     <a href="{{ route('news.show', $item->slug) }}" class="feature-card bg-white p-6 group">
-                        <div class="flex items-start space-x-4">
-                            @if ($item->featured_image_path)
-                            <img src="{{ Storage::disk('public')->url($item->featured_image_path) }}" alt="{{ $item->title }}" class="w-20 h-20 rounded object-cover">
-                            @endif
-                            <div>
+                        <div class="relative">
+                            <span class="news-tether pointer-events-none absolute left-10 top-20 bottom-0 w-px bg-emerald-900/10"></span>
+
+                            <div class="relative z-10 flex items-start space-x-4">
+                                <div class="relative w-20 h-20 shrink-0">
+                                    @if ($item->featured_image_path)
+                                        <img src="{{ Storage::disk('public')->url($item->featured_image_path) }}" alt="{{ $item->title }}" class="w-20 h-20 rounded object-cover">
+                                    @else
+                                        <div class="w-20 h-20 rounded bg-emerald-50 border border-emerald-900/10"></div>
+                                    @endif
+                                </div>
+
+                                <div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $item->title }}</h3>
                                 <div class="text-sm text-gray-500">{{ $item->published_at?->diffForHumans() }}</div>
 
@@ -644,6 +652,7 @@
                                     <span class="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white to-transparent"></span>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </a>
                     @empty
