@@ -626,6 +626,23 @@
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $item->title }}</h3>
                                 <div class="text-sm text-gray-500">{{ $item->published_at?->diffForHumans() }}</div>
+
+                                @if (!empty($item->categories))
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        @foreach ($item->categories as $category)
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                {{ ucfirst($category) }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <div class="mt-3 relative max-h-16 overflow-hidden">
+                                    <p class="text-sm text-gray-600 leading-relaxed">
+                                        {{ Str::limit(strip_tags($item->content), 160) }}
+                                    </p>
+                                    <span class="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white to-transparent"></span>
+                                </div>
                             </div>
                         </div>
                     </a>
