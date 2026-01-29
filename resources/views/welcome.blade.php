@@ -620,7 +620,8 @@
                     @forelse ($latestNews as $item)
                     <a href="{{ route('news.show', $item->slug) }}" class="feature-card bg-white p-6 group">
                         <div class="relative">
-                            <span class="news-tether pointer-events-none absolute left-10 top-20 bottom-0 w-px bg-emerald-900/10"></span>
+                            <span class="news-tether-vert pointer-events-none absolute w-px bg-emerald-900/10"></span>
+                            <span class="news-tether-curve pointer-events-none absolute border-l border-b rounded-bl-xl border-emerald-900/10"></span>
 
                             <div class="relative z-10 flex items-start space-x-4">
                                 <div class="relative w-20 h-20 shrink-0">
@@ -1238,6 +1239,58 @@
                 updateLottieParallax(e.scroll);
                 updateNewsIconsParallax(e.scroll);
             });
+
+            try {
+                const applyLandingNewsTetherLayout = (card) => {
+                    const vert = card.querySelector('.news-tether-vert');
+                    const curve = card.querySelector('.news-tether-curve');
+                    const img = card.querySelector('img') ?? card.querySelector('div.w-20.h-20.rounded');
+                    const snippet = card.querySelector('.mt-3.relative.max-h-16.overflow-hidden');
+
+                    if (!vert || !curve || !img || !snippet) return null;
+
+                    const wrapper = vert.parentElement;
+                    if (!wrapper) return null;
+
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    const imgRect = img.getBoundingClientRect();
+                    const snippetRect = snippet.getBoundingClientRect();
+
+                    const imgBottom = imgRect.bottom - wrapperRect.top;
+                    const imgCenterX = (imgRect.left - wrapperRect.left) + (imgRect.width / 2);
+                    const snippetMidY = (snippetRect.top - wrapperRect.top) + (snippetRect.height / 2);
+                    const snippetLeftX = (snippetRect.left - wrapperRect.left);
+
+                    const curveHeight = 14;
+                    const curveGap = 8;
+                    const curveEndX = Math.max(imgCenterX, snippetLeftX - curveGap);
+                    const curveWidth = Math.max(0, curveEndX - imgCenterX);
+                    const vertHeight = Math.max(0, (snippetMidY - curveHeight) - imgBottom);
+
+                    vert.style.top = `${imgBottom}px`;
+                    vert.style.left = `${imgCenterX}px`;
+                    vert.style.height = `${vertHeight}px`;
+
+                    curve.style.left = `${imgCenterX}px`;
+                    curve.style.top = `${snippetMidY - curveHeight}px`;
+                    curve.style.width = `${curveWidth}px`;
+                    curve.style.height = `${curveHeight}px`;
+                    curve.style.transform = '';
+                    return true;
+                };
+
+                const layoutLandingNewsTethers = () => {
+                    const cards = Array.from(document.querySelectorAll('a.feature-card')).filter((a) => a.querySelector('.news-tether-vert') && a.querySelector('.news-tether-curve'));
+                    cards.forEach((card) => {
+                        applyLandingNewsTetherLayout(card);
+                    });
+                };
+
+                requestAnimationFrame(() => requestAnimationFrame(layoutLandingNewsTethers));
+                window.addEventListener('resize', () => {
+                    requestAnimationFrame(() => requestAnimationFrame(layoutLandingNewsTethers));
+                });
+            } catch (_) {}
 
             // Animation frame for Lenis
             function raf(time) {
