@@ -571,7 +571,7 @@
     </section>
 
     <!-- Latest News Widget -->
-    <section class="py-20 relative overflow-hidden">
+    <section class="py-20 relative overflow-hidden bg-gradient-to-b from-emerald-50 via-emerald-50/80 to-emerald-100">
         <!-- Background SVG Icons Container -->
         <div class="news-bg-icons absolute inset-0 pointer-events-none z-0">
             <!-- News Icons -->
