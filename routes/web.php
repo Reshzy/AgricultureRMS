@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\EnrollmentController;
-use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\UserController;
 use App\Models\Enrollment;
 use App\Models\News;
+use Illuminate\Support\Facades\Route;
 
 // Landing page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -18,6 +19,10 @@ Route::view('/contact', 'contact')->name('contact');
 
 // Contact form submission
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Policy and Terms
+Route::get('/policy', [PolicyController::class, 'policy'])->name('policy');
+Route::get('/terms', [PolicyController::class, 'terms'])->name('terms');
 
 // Public News
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');

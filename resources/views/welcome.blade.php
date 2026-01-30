@@ -1183,6 +1183,14 @@
                                 <i class="fas fa-arrow-right text-emerald-500 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                 Contact
                             </a></li>
+                        <li><a href="{{ route('policy') }}" class="text-gray-300 hover:text-emerald-400 transition-colors duration-300 flex items-center group">
+                                <i class="fas fa-arrow-right text-emerald-500 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                Privacy Policy
+                            </a></li>
+                        <li><a href="{{ route('terms') }}" class="text-gray-300 hover:text-emerald-400 transition-colors duration-300 flex items-center group">
+                                <i class="fas fa-arrow-right text-emerald-500 mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                Terms of Service
+                            </a></li>
                     </ul>
                 </div>
 
@@ -1202,8 +1210,8 @@
                     &copy; {{ date('Y') }} Agriculture RMS - Department of Agriculture Claveria. All rights reserved.
                 </p>
                 <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Privacy Policy</a>
-                    <a href="#" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Terms of Service</a>
+                    <a href="{{ route('policy') }}" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Privacy Policy</a>
+                    <a href="{{ route('terms') }}" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Terms of Service</a>
                     @guest
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}" class="text-gray-400 hover:text-emerald-400 transition-colors duration-300">Get Started</a>
