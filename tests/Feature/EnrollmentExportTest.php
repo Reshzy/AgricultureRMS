@@ -11,7 +11,7 @@ class EnrollmentExportTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_export_enrollment_as_excel(): void
+    public function test_admin_can_export_enrollment_as_word(): void
     {
         $user = User::factory()->create(['is_admin' => true]);
         $this->actingAs($user);
@@ -24,16 +24,16 @@ class EnrollmentExportTest extends TestCase
             'status' => 'submitted',
         ]);
 
-        $response = $this->get(route('admin.enrollments.excel', $enrollment));
+        $response = $this->get(route('admin.enrollments.word', $enrollment));
 
         $response->assertStatus(200);
         $this->assertStringContainsString(
-            'spreadsheetml.sheet',
+            'wordprocessingml.document',
             $response->headers->get('content-type', '')
         );
         $response->assertHeader('content-disposition');
         $this->assertStringContainsString('attachment', $response->headers->get('content-disposition'));
-        $this->assertStringContainsString('.xlsx', $response->headers->get('content-disposition'));
+        $this->assertStringContainsString('.docx', $response->headers->get('content-disposition'));
     }
 
     public function test_guest_cannot_export_enrollment(): void
@@ -46,7 +46,7 @@ class EnrollmentExportTest extends TestCase
             'status' => 'submitted',
         ]);
 
-        $response = $this->get(route('admin.enrollments.excel', $enrollment));
+        $response = $this->get(route('admin.enrollments.word', $enrollment));
 
         $response->assertRedirect();
     }

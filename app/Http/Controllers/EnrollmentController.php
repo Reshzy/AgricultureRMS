@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\EnrollmentExport;
+use App\Exports\EnrollmentWordExport;
 use App\Models\Enrollment;
 use App\Models\FarmParcelHistory;
 use App\Models\FarmParcelItemHistory;
@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Maatwebsite\Excel\Facades\Excel;
 
 class EnrollmentController extends Controller
 {
@@ -682,11 +681,16 @@ class EnrollmentController extends Controller
         return redirect()->route('admin.enrollments.index')->with('status', 'Enrollment updated');
     }
 
-    public function exportExcel(Enrollment $enrollment)
+    public function exportWord(Enrollment $enrollment)
     {
-        $filename = 'enrollment_'.$enrollment->surname.'_'.$enrollment->first_name.'_'.now()->format('Ymd').'.xlsx';
+        $filename = 'enrollment_'.$enrollment->surname.'_'.$enrollment->first_name.'_'.now()->format('Ymd').'.docx';
 
-        return Excel::download(new EnrollmentExport($enrollment), $filename, \Maatwebsite\Excel\Excel::XLSX);
+        $export = new EnrollmentWordExport($enrollment);
+        $tempPath = $export->saveToTemp();
+
+        return response()->download($tempPath, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ])->deleteFileAfterSend(true);
     }
 
     public function store(Request $request)

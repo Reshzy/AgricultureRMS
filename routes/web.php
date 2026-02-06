@@ -115,7 +115,7 @@ Route::middleware([
     Route::post('/admin/enrollments', [EnrollmentController::class, 'store'])->name('admin.enrollments.store');
     Route::get('/admin/enrollments/{enrollment}', [EnrollmentController::class, 'show'])->name('admin.enrollments.show');
     Route::get('/admin/enrollments/{enrollment}/edit', [EnrollmentController::class, 'edit'])->name('admin.enrollments.edit');
-    Route::get('/admin/enrollments/{enrollment}/excel', [EnrollmentController::class, 'exportExcel'])->name('admin.enrollments.excel');
+    Route::get('/admin/enrollments/{enrollment}/word', [EnrollmentController::class, 'exportWord'])->name('admin.enrollments.word');
     Route::put('/admin/enrollments/{enrollment}', [EnrollmentController::class, 'update'])->name('admin.enrollments.update');
 
     // User Management
