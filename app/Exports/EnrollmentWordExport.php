@@ -116,7 +116,18 @@ class EnrollmentWordExport
         $noSpaceAfter = ['spaceAfter' => 0];
         $centerAlign = ['alignment' => Jc::CENTER];
 
-        $table = $section->addTable(array_merge(['borderSize' => 0], self::FULL_WIDTH_TABLE));
+        $cellBorder = [
+            'borderTopSize' => 6,
+            'borderTopColor' => '000000',
+            'borderLeftSize' => 6,
+            'borderLeftColor' => '000000',
+            'borderRightSize' => 6,
+            'borderRightColor' => '000000',
+            'borderBottomSize' => 6,
+            'borderBottomColor' => '000000',
+        ];
+
+        $table = $section->addTable(['borderSize' => 0, 'width' => 5000, 'unit' => TblWidth::PERCENT]);
         $table->addRow(400);
 
         $logoCell = $table->addCell(1500, ['valign' => 'center']);
@@ -124,18 +135,18 @@ class EnrollmentWordExport
             $logoCell->addImage($logoPath, ['width' => 80, 'height' => 80, 'alignment' => Jc::CENTER]);
         }
 
-        $titleCell = $table->addCell(6500, ['bgColor' => 'f8f9fa', 'valign' => 'center']);
-        $titleCell->addText('Republic of the Philippines', ['bold' => true, 'color' => self::SECTION_HEADER_BG, 'size' => 9], array_merge($noSpaceAfter, $centerAlign));
-        $titleCell->addText('Registry System for Basic Sectors in Agriculture', ['bold' => true, 'color' => self::SECTION_HEADER_BG, 'size' => 12], array_merge($noSpaceAfter, $centerAlign));
+        $titleCell = $table->addCell(6500, ['valign' => 'center']);
+        $titleCell->addText('Republic of the Philippines', ['bold' => true, 'color' => self::SECTION_HEADER_BG, 'size' => 12], array_merge($noSpaceAfter, $centerAlign));
+        $titleCell->addText('Registry System for Basic Sectors in Agriculture', ['bold' => true, 'color' => self::SECTION_HEADER_BG, 'size' => 18], array_merge($noSpaceAfter, $centerAlign));
 
-        $photoCell = $table->addCell(2000, ['valign' => 'center']);
+        $photoCell = $table->addCell(2000, array_merge(['valign' => 'center'], $cellBorder));
         if ($this->enrollment->photo_path) {
             $photoPath = storage_path('app/public/'.$this->enrollment->photo_path);
             if (file_exists($photoPath)) {
                 $croppedPath = $this->cropImageToSquare($photoPath);
                 if ($croppedPath) {
                     $this->croppedPhotoPath = $croppedPath;
-                    $photoCell->addImage($croppedPath, ['width' => 120, 'height' => 120, 'alignment' => Jc::CENTER]);
+                    $photoCell->addImage($croppedPath, ['width' => 144, 'height' => 144, 'alignment' => Jc::CENTER]);
                 }
             }
         }
@@ -145,7 +156,7 @@ class EnrollmentWordExport
         $formCell->addText('Department of Agriculture - Claveria, Cagayan', ['size' => 9], $noSpaceAfter);
         $formCell->addText('Farmer/Fisherfolk Enrollment Form', ['italic' => true, 'size' => 8, 'color' => '666666'], $noSpaceAfter);
 
-        $rsbsaCell = $table->addCell(2000, ['valign' => 'center']);
+        $rsbsaCell = $table->addCell(2000, array_merge(['valign' => 'center'], $cellBorder));
         if ($this->enrollment->rsbsa_reference_number) {
             $rsbsaCell->addText('RSBSA No:', ['size' => 8, 'color' => '666666'], array_merge($noSpaceAfter, $centerAlign));
             $rsbsaCell->addText($this->enrollment->rsbsa_reference_number, ['bold' => true, 'color' => self::SECTION_HEADER_BG], array_merge($noSpaceAfter, $centerAlign));
