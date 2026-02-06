@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EnrollmentExport;
 use App\Models\Enrollment;
 use App\Models\FarmParcelHistory;
 use App\Models\FarmParcelItemHistory;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use niklasravnsborg\LaravelPdf\Facades\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EnrollmentController extends Controller
 {
@@ -681,15 +682,11 @@ class EnrollmentController extends Controller
         return redirect()->route('admin.enrollments.index')->with('status', 'Enrollment updated');
     }
 
-    public function exportPdf(Enrollment $enrollment)
+    public function exportExcel(Enrollment $enrollment)
     {
-        $enrollment->load(['farmParcels.items']);
+        $filename = 'enrollment_'.$enrollment->surname.'_'.$enrollment->first_name.'_'.now()->format('Ymd').'.xlsx';
 
-        $pdf = PDF::loadView('admin.enrollments.pdf', compact('enrollment'));
-
-        $filename = 'enrollment_'.$enrollment->surname.'_'.$enrollment->first_name.'_'.now()->format('Ymd').'.pdf';
-
-        return $pdf->download($filename);
+        return Excel::download(new EnrollmentExport($enrollment), $filename, \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(Request $request)

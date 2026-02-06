@@ -22,7 +22,7 @@
                 </td>
                 <td class="px-6 py-3 text-right">
                     <button data-view-id="{{ $e->id }}" class="text-emerald-700 hover:text-emerald-900 mr-3 viewBtn" title="View Details"><i class="fa-solid fa-eye"></i></button>
-                    <a href="{{ route('admin.enrollments.pdf', $e) }}" class="text-indigo-600 hover:text-indigo-800 mr-3" title="Export PDF"><i class="fa-solid fa-file-pdf"></i></a>
+                    <a href="{{ route('admin.enrollments.excel', $e) }}" class="text-indigo-600 hover:text-indigo-800 mr-3" title="Export Excel"><i class="fa-solid fa-file-excel"></i></a>
                     <a href="{{ route('admin.enrollments.edit', $e) }}" class="text-blue-600 hover:text-blue-800 mr-3" title="Edit"><i class="fa-solid fa-edit"></i></a>
                 </td>
             </tr>
