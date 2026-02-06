@@ -683,10 +683,17 @@ class EnrollmentController extends Controller
 
     public function exportWord(Enrollment $enrollment)
     {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        ob_start();
+
         $filename = 'enrollment_'.$enrollment->surname.'_'.$enrollment->first_name.'_'.now()->format('Ymd').'.docx';
 
         $export = new EnrollmentWordExport($enrollment);
         $tempPath = $export->saveToTemp();
+
+        ob_end_clean();
 
         return response()->download($tempPath, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

@@ -6,12 +6,20 @@ use App\Models\Enrollment;
 use PhpOffice\PhpWord\Element\Cell;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 
 class EnrollmentWordExport
 {
     private const SECTION_HEADER_BG = '1a5f3f';
 
     private const SECTION_HEADER_FONT = ['color' => 'FFFFFF', 'bold' => true];
+
+    private const LABEL_FONT = ['bold' => true, 'color' => '333333'];
+
+    private const DATA_TABLE_STYLE = [
+        'borderSize' => 6,
+        'borderColor' => 'cccccc',
+    ];
 
     private ?string $croppedPhotoPath = null;
 
@@ -23,20 +31,36 @@ class EnrollmentWordExport
 
     public function build(): PhpWord
     {
+        Settings::setOutputEscapingEnabled(true);
+
         $phpWord = new PhpWord;
         $section = $phpWord->addSection();
 
-        $table = $section->addTable(['borderSize' => 1, 'borderColor' => '000000']);
+        $this->addHeaderRow($section);
+        $section->addTextBreak(1);
 
-        $this->addHeaderRow($table);
-        $this->addPersonalInfo($table);
-        $this->addAddressContact($table);
-        $this->addPersonalDetails($table);
-        $this->addHouseholdInfo($table);
-        $this->addEmergencyContact($table);
-        $this->addLivelihoodFarmProfile($table);
-        $this->addFarmParcels($table);
-        $this->addFooterRow($table);
+        $this->addPersonalInfo($section);
+        $section->addTextBreak(1);
+
+        $this->addAddressContact($section);
+        $section->addTextBreak(1);
+
+        $this->addPersonalDetails($section);
+        $section->addTextBreak(1);
+
+        $this->addHouseholdInfo($section);
+        $section->addTextBreak(1);
+
+        $this->addEmergencyContact($section);
+        $section->addTextBreak(1);
+
+        $this->addLivelihoodFarmProfile($section);
+        $section->addTextBreak(1);
+
+        $this->addFarmParcels($section);
+        $section->addTextBreak(1);
+
+        $this->addFooterRow($section);
 
         return $phpWord;
     }
@@ -57,25 +81,35 @@ class EnrollmentWordExport
         }
     }
 
-    private function addHeaderRow(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addSectionTitle(\PhpOffice\PhpWord\Element\Section $section, string $title): void
+    {
+        $headerTable = $section->addTable(['borderSize' => 0]);
+        $headerTable->addRow(220);
+        $cell = $headerTable->addCell(10000, ['bgColor' => self::SECTION_HEADER_BG]);
+        $cell->addText($title, array_merge(self::SECTION_HEADER_FONT, ['size' => 11]));
+        $section->addTextBreak(0);
+    }
+
+    private function addHeaderRow(\PhpOffice\PhpWord\Element\Section $section): void
     {
         $logoPath = storage_path('app/public/images/da-logo.png');
         if (! file_exists($logoPath)) {
             $logoPath = public_path('storage/images/da-logo.png');
         }
 
+        $table = $section->addTable(['borderSize' => 0]);
         $table->addRow(400);
-        $logoCell = $table->addCell(2000, ['gridSpan' => 2, 'vMerge' => 'restart', 'valign' => 'top']);
+        $logoCell = $table->addCell(2000, ['valign' => 'top']);
         if (file_exists($logoPath)) {
             $logoCell->addImage($logoPath, ['width' => 80, 'height' => 80]);
         }
 
-        $titleCell = $table->addCell(4000, ['gridSpan' => 4, 'bgColor' => 'f8f9fa', 'valign' => 'center']);
-        $titleCell->addText('Republic of the Philippines', self::SECTION_HEADER_FONT, ['size' => 9]);
-        $titleCell->addText('Registry System for Basic Sectors in Agriculture', self::SECTION_HEADER_FONT, ['size' => 12]);
+        $titleCell = $table->addCell(4000, ['bgColor' => 'f8f9fa', 'valign' => 'center']);
+        $titleCell->addText('Republic of the Philippines', ['bold' => true, 'color' => self::SECTION_HEADER_BG, 'size' => 9]);
+        $titleCell->addText('Registry System for Basic Sectors in Agriculture', ['bold' => true, 'color' => self::SECTION_HEADER_BG, 'size' => 12]);
         $titleCell->addText('Department of Agriculture - Claveria, Cagayan', ['size' => 9]);
 
-        $photoCell = $table->addCell(2000, ['vMerge' => 'restart', 'valign' => 'top', 'align' => 'center']);
+        $photoCell = $table->addCell(2000, ['valign' => 'top', 'align' => 'center']);
         if ($this->enrollment->photo_path) {
             $photoPath = storage_path('app/public/'.$this->enrollment->photo_path);
             if (file_exists($photoPath)) {
@@ -87,40 +121,19 @@ class EnrollmentWordExport
             }
         }
 
-        $table->addRow(100);
-        $table->addCell(null, ['vMerge' => 'continue']);
-        $table->addCell(4000, ['gridSpan' => 4, 'bgColor' => 'f8f9fa']);
-        $table->addCell(null, ['vMerge' => 'continue']);
-
-        $table->addRow(100);
-        $table->addCell(null, ['vMerge' => 'continue']);
-        $table->addCell(4000, ['gridSpan' => 4, 'bgColor' => 'f8f9fa']);
-        $table->addCell(null, ['vMerge' => 'continue']);
-
         $table->addRow(200);
-        $formCell = $table->addCell(5000, ['gridSpan' => 5]);
+        $formCell = $table->addCell(6000, ['gridSpan' => 3]);
         $formCell->addText('Farmer/Fisherfolk Enrollment Form', ['italic' => true, 'size' => 8, 'color' => '666666']);
-
-        $rsbsaCellStyle = ['gridSpan' => 2, 'align' => 'right'];
         if ($this->enrollment->rsbsa_reference_number) {
-            $rsbsaCellStyle['bgColor'] = '1a5f3f';
+            $formCell->addText('RSBSA No: '.$this->enrollment->rsbsa_reference_number, ['bold' => true, 'color' => self::SECTION_HEADER_BG]);
         }
-        $rsbsaCell = $table->addCell(2000, $rsbsaCellStyle);
-        if ($this->enrollment->rsbsa_reference_number) {
-            $rsbsaCell->addText('RSBSA No: '.$this->enrollment->rsbsa_reference_number, ['bold' => true, 'color' => 'FFFFFF']);
-        }
+        $section->addTextBreak(1);
     }
 
-    private function addSectionHeader(\PhpOffice\PhpWord\Element\Table $table, string $title): void
+    private function addPersonalInfo(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $table->addRow(250);
-        $cell = $table->addCell(10000, ['gridSpan' => 7, 'bgColor' => self::SECTION_HEADER_BG]);
-        $cell->addText($title, self::SECTION_HEADER_FONT);
-    }
-
-    private function addPersonalInfo(\PhpOffice\PhpWord\Element\Table $table): void
-    {
-        $this->addSectionHeader($table, 'I. Personal Information');
+        $this->addSectionTitle($section, 'I. Personal Information');
+        $table = $section->addTable(self::DATA_TABLE_STYLE);
 
         $table->addRow();
         $this->addLabelCell($table, 'Full Name:');
@@ -135,9 +148,9 @@ class EnrollmentWordExport
         $table->addCell(2000, ['gridSpan' => 2])->addText($this->enrollment->place_of_birth ?? 'N/A');
     }
 
-    private function addAddressContact(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addAddressContact(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionHeader($table, 'II. Address & Contact Information');
+        $this->addSectionTitle($section, 'II. Address & Contact Information');
 
         $address = trim(implode(' ', [
             $this->enrollment->address_house_lot,
@@ -148,6 +161,7 @@ class EnrollmentWordExport
             $this->enrollment->address_region,
         ]));
 
+        $table = $section->addTable(self::DATA_TABLE_STYLE);
         $table->addRow();
         $this->addLabelCell($table, 'Complete Address:');
         $table->addCell(8000, ['gridSpan' => 6])->addText($address ?: 'N/A');
@@ -159,10 +173,11 @@ class EnrollmentWordExport
         $table->addCell(5000, ['gridSpan' => 4])->addText($this->enrollment->landline_number ?? 'N/A');
     }
 
-    private function addPersonalDetails(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addPersonalDetails(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionHeader($table, 'III. Personal Details');
+        $this->addSectionTitle($section, 'III. Personal Details');
 
+        $table = $section->addTable(self::DATA_TABLE_STYLE);
         $table->addRow();
         $this->addLabelCell($table, 'Education:');
         $table->addCell(1500)->addText($this->enrollment->highest_formal_education ?? 'N/A');
@@ -182,14 +197,15 @@ class EnrollmentWordExport
         $table->addCell(8000, ['gridSpan' => 6])->addText($this->enrollment->mothers_maiden_name ?? 'N/A');
     }
 
-    private function addHouseholdInfo(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addHouseholdInfo(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionHeader($table, 'IV. Household Information');
+        $this->addSectionTitle($section, 'IV. Household Information');
 
         $householdText = $this->enrollment->household_head
             ? 'YES - This person is the household head'
             : trim(($this->enrollment->household_head_name ?? 'N/A').($this->enrollment->relationship_to_head ? " ({$this->enrollment->relationship_to_head})" : ''));
 
+        $table = $section->addTable(self::DATA_TABLE_STYLE);
         $table->addRow();
         $this->addLabelCell($table, 'Household Head:');
         $table->addCell(8000, ['gridSpan' => 6])->addText($householdText);
@@ -225,10 +241,11 @@ class EnrollmentWordExport
         }
     }
 
-    private function addEmergencyContact(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addEmergencyContact(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionHeader($table, 'V. Emergency Contact');
+        $this->addSectionTitle($section, 'V. Emergency Contact');
 
+        $table = $section->addTable(self::DATA_TABLE_STYLE);
         $table->addRow();
         $this->addLabelCell($table, 'Contact Person:');
         $table->addCell(4000, ['gridSpan' => 3])->addText($this->enrollment->emergency_contact_name ?? 'N/A');
@@ -236,10 +253,11 @@ class EnrollmentWordExport
         $table->addCell(2000, ['gridSpan' => 2])->addText($this->enrollment->emergency_contact_number ?? 'N/A');
     }
 
-    private function addLivelihoodFarmProfile(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addLivelihoodFarmProfile(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionHeader($table, 'VI. Livelihood & Farm Profile');
+        $this->addSectionTitle($section, 'VI. Livelihood & Farm Profile');
 
+        $table = $section->addTable(self::DATA_TABLE_STYLE);
         $table->addRow();
         $this->addLabelCell($table, 'Main Livelihood:');
         $table->addCell(8000, ['gridSpan' => 6])->addText(str_replace('_', ' ', $this->enrollment->main_livelihood));
@@ -275,18 +293,20 @@ class EnrollmentWordExport
         $table->addCell(2000, ['gridSpan' => 2])->addText('₱'.number_format($this->enrollment->gross_income_non_farming ?? 0, 2), ['bold' => true, 'color' => self::SECTION_HEADER_BG]);
     }
 
-    private function addFarmParcels(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addFarmParcels(\PhpOffice\PhpWord\Element\Section $section): void
     {
         if (! $this->enrollment->farmParcels || $this->enrollment->farmParcels->count() === 0) {
             return;
         }
 
         $count = $this->enrollment->farmParcels->count();
-        $this->addSectionHeader($table, "VII. Farm Parcels ({$count} Total)");
+        $this->addSectionTitle($section, "VII. Farm Parcels ({$count} Total)");
 
         foreach ($this->enrollment->farmParcels as $i => $parcel) {
+            $table = $section->addTable(self::DATA_TABLE_STYLE);
+
             $table->addRow();
-            $cell = $table->addCell(10000, ['gridSpan' => 7, 'bgColor' => 'f5f5f5']);
+            $cell = $table->addCell(10000, ['gridSpan' => 7, 'bgColor' => 'e8f5e9']);
             $cell->addText('Parcel #'.($i + 1).": {$parcel->barangay}, {$parcel->municipality}", ['bold' => true, 'color' => self::SECTION_HEADER_BG]);
 
             $table->addRow();
@@ -324,22 +344,24 @@ class EnrollmentWordExport
                     $table->addCell(8000, ['gridSpan' => 6])->addText(implode(' ', $parts));
                 }
             }
+
+            $section->addTextBreak(0);
         }
     }
 
-    private function addFooterRow(\PhpOffice\PhpWord\Element\Table $table): void
+    private function addFooterRow(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $table->addRow();
-        $cell = $table->addCell(10000, ['gridSpan' => 7, 'align' => 'center']);
-        $cell->addText('Department of Agriculture - Claveria, Cagayan', ['bold' => true, 'color' => self::SECTION_HEADER_BG]);
-        $cell->addText('Registry System for Basic Sectors in Agriculture (RSBSA)');
-        $cell->addText('Document generated on '.now()->format('F d, Y').' at '.now()->format('g:i A'), ['size' => 8, 'color' => '666666']);
+        $section->addTextBreak(1);
+        $footerStyle = ['align' => 'center'];
+        $section->addText('Department of Agriculture - Claveria, Cagayan', ['bold' => true, 'color' => self::SECTION_HEADER_BG], $footerStyle);
+        $section->addText('Registry System for Basic Sectors in Agriculture (RSBSA)', null, $footerStyle);
+        $section->addText('Document generated on '.now()->format('F d, Y').' at '.now()->format('g:i A'), ['size' => 8, 'color' => '666666'], $footerStyle);
     }
 
-    private function addLabelCell(\PhpOffice\PhpWord\Element\Table $table, string $label, string $color = '000000'): Cell
+    private function addLabelCell(\PhpOffice\PhpWord\Element\Table $table, string $label, string $color = '333333'): Cell
     {
-        $cell = $table->addCell(2000);
-        $cell->addText($label, ['bold' => true, 'color' => $color]);
+        $cell = $table->addCell(2000, ['bgColor' => 'f8f9fa']);
+        $cell->addText($label, self::LABEL_FONT + ['color' => $color]);
 
         return $cell;
     }
@@ -390,8 +412,8 @@ class EnrollmentWordExport
             return null;
         }
 
-        $tempPath = tempnam(sys_get_temp_dir(), 'enrollment_photo_').'.png';
-        if (! imagepng($cropped, $tempPath)) {
+        $tempPath = tempnam(sys_get_temp_dir(), 'enrollment_photo_').'.jpg';
+        if (! imagejpeg($cropped, $tempPath, 90)) {
             imagedestroy($cropped);
 
             return null;
