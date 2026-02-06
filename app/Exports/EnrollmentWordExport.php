@@ -7,6 +7,7 @@ use PhpOffice\PhpWord\Element\Cell;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\SimpleType\TblWidth;
 
 class EnrollmentWordExport
 {
@@ -16,9 +17,16 @@ class EnrollmentWordExport
 
     private const LABEL_FONT = ['bold' => true, 'color' => '333333'];
 
+    private const FULL_WIDTH_TABLE = [
+        'width' => 5000,
+        'unit' => TblWidth::PERCENT,
+    ];
+
     private const DATA_TABLE_STYLE = [
         'borderSize' => 6,
         'borderColor' => 'cccccc',
+        'width' => 5000,
+        'unit' => TblWidth::PERCENT,
     ];
 
     private ?string $croppedPhotoPath = null;
@@ -34,7 +42,12 @@ class EnrollmentWordExport
         Settings::setOutputEscapingEnabled(true);
 
         $phpWord = new PhpWord;
-        $section = $phpWord->addSection();
+        $section = $phpWord->addSection([
+            'marginTop' => 720,
+            'marginLeft' => 720,
+            'marginRight' => 720,
+            'marginBottom' => 720,
+        ]);
 
         $this->addHeaderRow($section);
         $section->addTextBreak(1);
@@ -81,13 +94,13 @@ class EnrollmentWordExport
         }
     }
 
-    private function addSectionTitle(\PhpOffice\PhpWord\Element\Section $section, string $title): void
+    private const TABLE_COLUMNS = 7;
+
+    private function addTableSectionHeader(\PhpOffice\PhpWord\Element\Table $table, string $title): void
     {
-        $headerTable = $section->addTable(['borderSize' => 0]);
-        $headerTable->addRow(220);
-        $cell = $headerTable->addCell(10000, ['bgColor' => self::SECTION_HEADER_BG]);
+        $table->addRow(220);
+        $cell = $table->addCell(null, ['gridSpan' => self::TABLE_COLUMNS, 'bgColor' => self::SECTION_HEADER_BG]);
         $cell->addText($title, array_merge(self::SECTION_HEADER_FONT, ['size' => 11]));
-        $section->addTextBreak(0);
     }
 
     private function addHeaderRow(\PhpOffice\PhpWord\Element\Section $section): void
@@ -97,7 +110,7 @@ class EnrollmentWordExport
             $logoPath = public_path('storage/images/da-logo.png');
         }
 
-        $table = $section->addTable(['borderSize' => 0]);
+        $table = $section->addTable(array_merge(['borderSize' => 0], self::FULL_WIDTH_TABLE));
         $table->addRow(400);
         $logoCell = $table->addCell(2000, ['valign' => 'top']);
         if (file_exists($logoPath)) {
@@ -132,8 +145,8 @@ class EnrollmentWordExport
 
     private function addPersonalInfo(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionTitle($section, 'I. Personal Information');
         $table = $section->addTable(self::DATA_TABLE_STYLE);
+        $this->addTableSectionHeader($table, 'I. Personal Information');
 
         $table->addRow();
         $this->addLabelCell($table, 'Full Name:');
@@ -150,8 +163,6 @@ class EnrollmentWordExport
 
     private function addAddressContact(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionTitle($section, 'II. Address & Contact Information');
-
         $address = trim(implode(' ', [
             $this->enrollment->address_house_lot,
             $this->enrollment->address_street,
@@ -162,6 +173,7 @@ class EnrollmentWordExport
         ]));
 
         $table = $section->addTable(self::DATA_TABLE_STYLE);
+        $this->addTableSectionHeader($table, 'II. Address & Contact Information');
         $table->addRow();
         $this->addLabelCell($table, 'Complete Address:');
         $table->addCell(8000, ['gridSpan' => 6])->addText($address ?: 'N/A');
@@ -175,9 +187,8 @@ class EnrollmentWordExport
 
     private function addPersonalDetails(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionTitle($section, 'III. Personal Details');
-
         $table = $section->addTable(self::DATA_TABLE_STYLE);
+        $this->addTableSectionHeader($table, 'III. Personal Details');
         $table->addRow();
         $this->addLabelCell($table, 'Education:');
         $table->addCell(1500)->addText($this->enrollment->highest_formal_education ?? 'N/A');
@@ -199,13 +210,12 @@ class EnrollmentWordExport
 
     private function addHouseholdInfo(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionTitle($section, 'IV. Household Information');
-
         $householdText = $this->enrollment->household_head
             ? 'YES - This person is the household head'
             : trim(($this->enrollment->household_head_name ?? 'N/A').($this->enrollment->relationship_to_head ? " ({$this->enrollment->relationship_to_head})" : ''));
 
         $table = $section->addTable(self::DATA_TABLE_STYLE);
+        $this->addTableSectionHeader($table, 'IV. Household Information');
         $table->addRow();
         $this->addLabelCell($table, 'Household Head:');
         $table->addCell(8000, ['gridSpan' => 6])->addText($householdText);
@@ -243,9 +253,8 @@ class EnrollmentWordExport
 
     private function addEmergencyContact(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionTitle($section, 'V. Emergency Contact');
-
         $table = $section->addTable(self::DATA_TABLE_STYLE);
+        $this->addTableSectionHeader($table, 'V. Emergency Contact');
         $table->addRow();
         $this->addLabelCell($table, 'Contact Person:');
         $table->addCell(4000, ['gridSpan' => 3])->addText($this->enrollment->emergency_contact_name ?? 'N/A');
@@ -255,9 +264,8 @@ class EnrollmentWordExport
 
     private function addLivelihoodFarmProfile(\PhpOffice\PhpWord\Element\Section $section): void
     {
-        $this->addSectionTitle($section, 'VI. Livelihood & Farm Profile');
-
         $table = $section->addTable(self::DATA_TABLE_STYLE);
+        $this->addTableSectionHeader($table, 'VI. Livelihood & Farm Profile');
         $table->addRow();
         $this->addLabelCell($table, 'Main Livelihood:');
         $table->addCell(8000, ['gridSpan' => 6])->addText(str_replace('_', ' ', $this->enrollment->main_livelihood));
@@ -300,13 +308,14 @@ class EnrollmentWordExport
         }
 
         $count = $this->enrollment->farmParcels->count();
-        $this->addSectionTitle($section, "VII. Farm Parcels ({$count} Total)");
 
         foreach ($this->enrollment->farmParcels as $i => $parcel) {
             $table = $section->addTable(self::DATA_TABLE_STYLE);
-
+            if ($i === 0) {
+                $this->addTableSectionHeader($table, "VII. Farm Parcels ({$count} Total)");
+            }
             $table->addRow();
-            $cell = $table->addCell(10000, ['gridSpan' => 7, 'bgColor' => 'e8f5e9']);
+            $cell = $table->addCell(null, ['gridSpan' => self::TABLE_COLUMNS, 'bgColor' => 'e8f5e9']);
             $cell->addText('Parcel #'.($i + 1).": {$parcel->barangay}, {$parcel->municipality}", ['bold' => true, 'color' => self::SECTION_HEADER_BG]);
 
             $table->addRow();
