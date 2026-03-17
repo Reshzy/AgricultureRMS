@@ -1050,24 +1050,24 @@
 
                     // Find and select Cagayan province
                     const cagayanProvince = provinces.find(p => p.name.toLowerCase().includes('cagayan') && !p.name.toLowerCase().includes('west'));
-                    if (cagayanProvince && provSel) {
-                        provSel.value = cagayanProvince.code;
-                        cagayanProvinceCode = cagayanProvince.code; // Save for farm parcels
+                        if (cagayanProvince && provSel) {
+                            provSel.value = cagayanProvince.code;
+                            cagayanProvinceCode = cagayanProvince.code; // Save for farm parcels
 
-                        // Load cities for Cagayan province
-                        const cities = await fetchJSON(`{{ url('/api/psgc/provinces') }}/${cagayanProvince.code}/cities`);
-                        setOptions(citySel, cities);
+                            // Load cities for Cagayan province
+                            const cities = await fetchJSON(`{{ url('/api/psgc/provinces') }}/${cagayanProvince.code}/cities`);
+                            setOptions(citySel, cities);
 
-                        // Find and select Claveria
-                        const claveria = cities.find(c => c.name.toLowerCase().includes('claveria'));
-                        if (claveria && citySel) {
-                            citySel.value = claveria.code;
+                            // Find and select Claveria
+                            const claveria = cities.find(c => c.name.toLowerCase().includes('claveria'));
+                            if (claveria && citySel) {
+                                citySel.value = claveria.code;
 
-                            // Load barangays for Claveria
-                            const barangays = await fetchJSON(`{{ url('/api/psgc/cities') }}/${claveria.code}/barangays`);
-                            setOptions(brgySel, barangays);
+                                // Load barangays for Claveria
+                                const barangays = await fetchJSON(`{{ url('/api/psgc/cities') }}/${claveria.code}/barangays`);
+                                setOptions(brgySel, barangays);
+                            }
                         }
-                    }
                 }
 
                 // Note: Event listeners removed for disabled fields (region, province, city)
