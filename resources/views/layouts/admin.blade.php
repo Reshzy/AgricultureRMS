@@ -15,14 +15,18 @@
     @stack('head')
     <style>
         .glass {
-            backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.6);
+            -webkit-backdrop-filter: saturate(180%) blur(22px);
+            backdrop-filter: saturate(180%) blur(22px);
+            background: rgba(255, 255, 255, 0.42);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.55);
         }
 
         .sidebar-gradient {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(160deg, #166534 0%, #14532d 40%, #022c22 100%);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            background: linear-gradient(160deg, rgba(22, 101, 52, 0.88) 0%, rgba(20, 83, 45, 0.9) 40%, rgba(2, 44, 34, 0.92) 100%);
         }
 
         /* Create a second gradient that will fade in smoothly */
@@ -30,7 +34,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(160deg, #166534 0%, #14532d 90%, #022c22 100%);
+            background: linear-gradient(160deg, rgba(22, 101, 52, 0.76) 0%, rgba(20, 83, 45, 0.8) 90%, rgba(2, 44, 34, 0.84) 100%);
             opacity: 0;
             transition: opacity 0.3s ease-out;
             pointer-events: none;
