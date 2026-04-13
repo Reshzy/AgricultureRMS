@@ -71,8 +71,11 @@
                 <div>
                     <x-label value="Address" />
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1 bg-emerald-50/50 border border-emerald-900/5 rounded-xl p-4">
-                        <x-input name="address_house_lot" class="js-clean" placeholder="House/lot/bldg.no./purok" value="{{ old('address_house_lot', $enrollment->address_house_lot) }}" />
-                        <div class="md:col-span-2">
+                        <div>
+                            <x-label value="House/lot/bldg.no./purok" />    
+                            <x-input name="address_house_lot" class="js-clean w-full" placeholder="House/lot/bldg.no./purok" />
+                        </div>
+                        <div>
                             <x-label value="Street/Sitio/Subdv." />
                             <x-input name="address_street" class="js-clean w-full" placeholder="Street/Sitio/Subdv." list="streetDatalist" value="{{ old('address_street', $enrollment->address_street) }}" />
                             <datalist id="streetDatalist"></datalist>

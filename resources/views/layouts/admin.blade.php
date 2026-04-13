@@ -166,6 +166,8 @@
             background: linear-gradient(180deg, #10b981 0%, #059669 100%);
             border: 1px solid rgba(5, 150, 105, 0.7);
             box-shadow: 0 16px 24px rgba(5, 150, 105, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            position: relative;
+            z-index: 2;
         }
 
         .tactile-home:hover {
@@ -173,24 +175,31 @@
         }
 
         .scroll-top-wrap {
-            position: relative;
             width: 0;
-            height: 0;
+            margin-left: 0;
+            position: relative;
+            flex: 0 0 auto;
+            transition: width 0.25s ease, margin-left 0.25s ease;
+            overflow: visible;
+        }
+
+        .scroll-top-wrap.is-visible {
+            width: 2.75rem;
+            margin-left: 0.25rem;
         }
 
         .scroll-top-btn {
-            position: absolute;
-            top: 50%;
-            left: 0;
+            position: relative;
+            z-index: 1;
             opacity: 0;
-            transform: translate(-36px, -50%) scale(0.92);
+            transform: translateX(calc(-100% - 0.25rem)) scale(0.92);
             pointer-events: none;
             transition: transform 0.25s ease, opacity 0.25s ease;
         }
 
         .scroll-top-btn.is-visible {
             opacity: 1;
-            transform: translate(14px, -50%) scale(1);
+            transform: translateX(0) scale(1);
             pointer-events: auto;
         }
     </style>
@@ -264,7 +273,9 @@
                     return;
                 }
 
-                bottomScrollTopButton.classList.toggle('is-visible', window.scrollY > 0);
+                const isVisible = window.scrollY > 0;
+                bottomScrollTopButton.classList.toggle('is-visible', isVisible);
+                bottomScrollTopButton.parentElement?.classList.toggle('is-visible', isVisible);
             };
 
             bottomScrollTopButton?.addEventListener('click', () => {
@@ -417,7 +428,7 @@
                 <i class="fa-solid fa-house"></i>
             </a>
 
-            <div class="scroll-top-wrap" aria-hidden="true">
+            <div class="scroll-top-wrap">
                 <button id="bottomScrollTopButton" type="button" class="tactile-btn scroll-top-btn" aria-label="Scroll to top">
                     <i class="fa-solid fa-arrow-up"></i>
                 </button>
