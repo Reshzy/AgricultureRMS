@@ -114,6 +114,85 @@
                 transform: translateY(0);
             }
         }
+
+        .tactile-bottom-nav {
+            position: fixed;
+            left: 50%;
+            bottom: 1rem;
+            transform: translateX(-50%);
+            z-index: 60;
+        }
+
+        .tactile-shell {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 18px 30px rgba(2, 44, 34, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+        }
+
+        .tactile-btn {
+            width: 2.75rem;
+            height: 2.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            border: 1px solid rgba(4, 120, 87, 0.15);
+            color: rgb(6, 95, 70);
+            background: linear-gradient(180deg, #ffffff 0%, #ecfdf5 100%);
+            box-shadow: 0 8px 16px rgba(2, 44, 34, 0.16);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .tactile-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(2, 44, 34, 0.2);
+        }
+
+        .tactile-btn:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 6px rgba(2, 44, 34, 0.18);
+        }
+
+        .tactile-home {
+            width: 4rem;
+            height: 4rem;
+            color: #ffffff;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            border: 1px solid rgba(5, 150, 105, 0.7);
+            box-shadow: 0 16px 24px rgba(5, 150, 105, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        .tactile-home:hover {
+            box-shadow: 0 18px 28px rgba(5, 150, 105, 0.52);
+        }
+
+        .scroll-top-wrap {
+            position: relative;
+            width: 0;
+            height: 0;
+        }
+
+        .scroll-top-btn {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            opacity: 0;
+            transform: translate(-36px, -50%) scale(0.92);
+            pointer-events: none;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        .scroll-top-btn.is-visible {
+            opacity: 1;
+            transform: translate(14px, -50%) scale(1);
+            pointer-events: auto;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -121,6 +200,8 @@
             const sidebar = document.getElementById('sidebar');
             const main = document.getElementById('main');
             const sidebarStateKey = 'adminSidebarCollapsed';
+            const bottomSidebarToggle = document.getElementById('bottomSidebarToggle');
+            const bottomScrollTopButton = document.getElementById('bottomScrollTopButton');
 
             sidebar?.classList.add('no-transition');
             main?.classList.add('no-transition');
@@ -153,11 +234,14 @@
                 main?.classList.remove('no-transition');
             });
 
-            toggle?.addEventListener('click', () => {
+            const handleSidebarToggle = () => {
                 const nextState = !(sidebar?.classList.contains('collapsed'));
                 applySidebarState(nextState);
                 localStorage.setItem(sidebarStateKey, String(nextState));
-            });
+            };
+
+            toggle?.addEventListener('click', handleSidebarToggle);
+            bottomSidebarToggle?.addEventListener('click', handleSidebarToggle);
 
             // Profile dropdown toggle
             const profileBtn = document.getElementById('profileDropdownBtn');
@@ -174,6 +258,26 @@
                     profileDropdown?.classList.remove('show');
                 }
             });
+
+            const updateScrollTopButtonState = () => {
+                if (!bottomScrollTopButton) {
+                    return;
+                }
+
+                bottomScrollTopButton.classList.toggle('is-visible', window.scrollY > 0);
+            };
+
+            bottomScrollTopButton?.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                });
+            });
+
+            window.addEventListener('scroll', updateScrollTopButtonState, {
+                passive: true,
+            });
+            updateScrollTopButtonState();
         });
     </script>
 </head>
@@ -252,7 +356,7 @@
         </div>
     </aside>
 
-    <main id="main" class="transition-all duration-300 ml-72">
+    <main id="main" class="transition-all duration-300 ml-72 pb-28">
         <header class="glass sticky top-0 z-40 backdrop-saturate-150 border-b border-emerald-900/10">
             <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -302,6 +406,24 @@
             &copy; {{ date('Y') }} Agriculture RMS - Department of Agriculture Claveria. All rights reserved.
         </footer>
     </main>
+
+    <div class="tactile-bottom-nav" role="navigation" aria-label="Admin quick navigation">
+        <div class="tactile-shell">
+            <button id="bottomSidebarToggle" type="button" class="tactile-btn" aria-label="Toggle sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <a href="{{ route('dashboard') }}" class="tactile-btn tactile-home" aria-label="Go to dashboard">
+                <i class="fa-solid fa-house"></i>
+            </a>
+
+            <div class="scroll-top-wrap" aria-hidden="true">
+                <button id="bottomScrollTopButton" type="button" class="tactile-btn scroll-top-btn" aria-label="Scroll to top">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     @stack('scripts')
 </body>
