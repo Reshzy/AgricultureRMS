@@ -204,6 +204,39 @@
             if (e.target === modal) modal.classList.add('hidden');
         });
 
+        function initShowTabs(scope = document) {
+            const tabList = scope.querySelector('[data-tab-list]');
+            if (!tabList) return;
+
+            const tabButtons = Array.from(tabList.querySelectorAll('[data-tab-trigger]'));
+            const tabPanels = Array.from(scope.querySelectorAll('[data-tab-panel]'));
+
+            if (!tabButtons.length || !tabPanels.length) return;
+
+            const activateTab = (tabName) => {
+                tabButtons.forEach((button) => {
+                    const isActive = button.dataset.tabTrigger === tabName;
+                    button.classList.toggle('is-active', isActive);
+                    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                    button.setAttribute('tabindex', isActive ? '0' : '-1');
+                });
+
+                tabPanels.forEach((panel) => {
+                    const isActive = panel.dataset.tabPanel === tabName;
+                    panel.classList.toggle('hidden', !isActive);
+                });
+            };
+
+            tabButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    activateTab(button.dataset.tabTrigger);
+                });
+            });
+
+            const defaultButton = tabButtons.find((button) => button.classList.contains('is-active')) ?? tabButtons[0];
+            activateTab(defaultButton.dataset.tabTrigger);
+        }
+
         function bindViewButtons(scope = document) {
             scope.querySelectorAll('.viewBtn').forEach(btn => {
                 btn.addEventListener('click', async () => {
@@ -211,6 +244,7 @@
                     const res = await fetch(`{{ url('/admin/enrollments') }}/${id}`);
                     const html = await res.text();
                     body.innerHTML = html;
+                    initShowTabs(body);
                     modal.classList.remove('hidden');
                 });
             });

@@ -15,14 +15,18 @@
     @stack('head')
     <style>
         .glass {
-            backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.6);
+            -webkit-backdrop-filter: saturate(180%) blur(22px);
+            backdrop-filter: saturate(180%) blur(22px);
+            background: rgba(255, 255, 255, 0.42);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.55);
         }
 
         .sidebar-gradient {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(160deg, #166534 0%, #14532d 40%, #022c22 100%);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            background: linear-gradient(160deg, rgba(22, 101, 52, 0.88) 0%, rgba(20, 83, 45, 0.9) 40%, rgba(2, 44, 34, 0.92) 100%);
         }
 
         /* Create a second gradient that will fade in smoothly */
@@ -30,7 +34,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(160deg, #166534 0%, #14532d 90%, #022c22 100%);
+            background: linear-gradient(160deg, rgba(22, 101, 52, 0.76) 0%, rgba(20, 83, 45, 0.8) 90%, rgba(2, 44, 34, 0.84) 100%);
             opacity: 0;
             transition: opacity 0.3s ease-out;
             pointer-events: none;
@@ -114,6 +118,90 @@
                 transform: translateY(0);
             }
         }
+
+        .tactile-bottom-nav {
+            position: fixed;
+            left: 50%;
+            bottom: 1rem;
+            transform: translateX(-50%);
+            z-index: 60;
+        }
+
+        .tactile-shell {
+            display: grid;
+            grid-template-columns: 2.75rem 4rem 2.75rem;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 18px 30px rgba(2, 44, 34, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+        }
+
+        .tactile-btn {
+            width: 2.75rem;
+            height: 2.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            border: 1px solid rgba(4, 120, 87, 0.15);
+            color: rgb(6, 95, 70);
+            background: linear-gradient(180deg, #ffffff 0%, #ecfdf5 100%);
+            box-shadow: 0 8px 16px rgba(2, 44, 34, 0.16);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .tactile-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 20px rgba(2, 44, 34, 0.2);
+        }
+
+        .tactile-btn:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 6px rgba(2, 44, 34, 0.18);
+        }
+
+        .tactile-home {
+            width: 4rem;
+            height: 4rem;
+            color: #ffffff;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            border: 1px solid rgba(5, 150, 105, 0.7);
+            box-shadow: 0 16px 24px rgba(5, 150, 105, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            position: relative;
+            z-index: 2;
+        }
+
+        .tactile-home:hover {
+            box-shadow: 0 18px 28px rgba(5, 150, 105, 0.52);
+        }
+
+        .scroll-top-btn {
+            width: 100%;
+            opacity: 0.72;
+            transform: scale(0.8);
+            color: #94a3b8;
+            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            border-color: rgba(148, 163, 184, 0.4);
+            box-shadow: none;
+            pointer-events: none;
+            cursor: not-allowed;
+            transition: transform 0.22s ease, opacity 0.22s ease, background-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .scroll-top-btn.is-visible {
+            opacity: 1;
+            transform: scale(1);
+            color: rgb(6, 95, 70);
+            background: linear-gradient(180deg, #ffffff 0%, #ecfdf5 100%);
+            border-color: rgba(4, 120, 87, 0.15);
+            box-shadow: 0 8px 16px rgba(2, 44, 34, 0.16);
+            pointer-events: auto;
+            cursor: pointer;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -121,6 +209,8 @@
             const sidebar = document.getElementById('sidebar');
             const main = document.getElementById('main');
             const sidebarStateKey = 'adminSidebarCollapsed';
+            const bottomSidebarToggle = document.getElementById('bottomSidebarToggle');
+            const bottomScrollTopButton = document.getElementById('bottomScrollTopButton');
 
             sidebar?.classList.add('no-transition');
             main?.classList.add('no-transition');
@@ -153,11 +243,14 @@
                 main?.classList.remove('no-transition');
             });
 
-            toggle?.addEventListener('click', () => {
+            const handleSidebarToggle = () => {
                 const nextState = !(sidebar?.classList.contains('collapsed'));
                 applySidebarState(nextState);
                 localStorage.setItem(sidebarStateKey, String(nextState));
-            });
+            };
+
+            toggle?.addEventListener('click', handleSidebarToggle);
+            bottomSidebarToggle?.addEventListener('click', handleSidebarToggle);
 
             // Profile dropdown toggle
             const profileBtn = document.getElementById('profileDropdownBtn');
@@ -174,6 +267,29 @@
                     profileDropdown?.classList.remove('show');
                 }
             });
+
+            const updateScrollTopButtonState = () => {
+                if (!bottomScrollTopButton) {
+                    return;
+                }
+
+                const isVisible = window.scrollY > 0;
+                bottomScrollTopButton.classList.toggle('is-visible', isVisible);
+                bottomScrollTopButton.disabled = !isVisible;
+                bottomScrollTopButton.setAttribute('aria-disabled', isVisible ? 'false' : 'true');
+            };
+
+            bottomScrollTopButton?.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                });
+            });
+
+            window.addEventListener('scroll', updateScrollTopButtonState, {
+                passive: true,
+            });
+            updateScrollTopButtonState();
         });
     </script>
 </head>
@@ -252,7 +368,7 @@
         </div>
     </aside>
 
-    <main id="main" class="transition-all duration-300 ml-72">
+    <main id="main" class="transition-all duration-300 ml-72 pb-28">
         <header class="glass sticky top-0 z-40 backdrop-saturate-150 border-b border-emerald-900/10">
             <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -302,6 +418,22 @@
             &copy; {{ date('Y') }} Agriculture RMS - Department of Agriculture Claveria. All rights reserved.
         </footer>
     </main>
+
+    <div class="tactile-bottom-nav" role="navigation" aria-label="Admin quick navigation">
+        <div class="tactile-shell">
+            <button id="bottomSidebarToggle" type="button" class="tactile-btn" aria-label="Toggle sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <a href="{{ route('dashboard') }}" class="tactile-btn tactile-home" aria-label="Go to dashboard">
+                <i class="fa-solid fa-house"></i>
+            </a>
+
+            <button id="bottomScrollTopButton" type="button" class="tactile-btn scroll-top-btn" aria-label="Scroll to top" aria-disabled="true" disabled>
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
+        </div>
+    </div>
 
     @stack('scripts')
 </body>
