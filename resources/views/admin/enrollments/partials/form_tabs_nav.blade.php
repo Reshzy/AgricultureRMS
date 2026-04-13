@@ -49,8 +49,47 @@
     }
 
     .folder-subtab-shell {
+        position: relative;
         border: 1px solid #d1fae5;
         background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+        margin-top: 0.15rem;
+        margin-inline: 0.6rem;
+        padding-top: 1.65rem;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    }
+
+    .folder-subtab-shell::before {
+        content: '';
+        position: absolute;
+        top: -0.8rem;
+        left: var(--subtab-anchor-left, 1.7rem);
+        width: 0;
+        height: 0.8rem;
+        border-left: 2px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .folder-subtab-shell::after {
+        content: '';
+        position: absolute;
+        top: -0.1rem;
+        left: var(--subtab-anchor-left, 1.7rem);
+        width: 4.4rem;
+        border-top: 2px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .folder-subtab-caption {
+        position: absolute;
+        top: 0.55rem;
+        left: 1rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #047857;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 9999px;
+        padding: 0.15rem 0.55rem;
     }
 
     .folder-subtab {

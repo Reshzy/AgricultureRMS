@@ -11,7 +11,8 @@
                 @include('admin.enrollments.partials.form_tabs_nav')
 
                 <section id="tab-personal-panel" role="tabpanel" aria-labelledby="tab-personal-trigger" data-tab-panel="personal" class="space-y-6">
-                <div class="folder-subtab-shell rounded-xl p-3">
+                <div class="folder-subtab-shell rounded-xl p-3" style="--subtab-anchor-left: 1.8rem;">
+                    <p class="folder-subtab-caption">Part 1 sections</p>
                     <div class="flex flex-wrap gap-2" role="tablist" aria-label="Part 1 groups" data-subtab-list="personal">
                         <button
                             type="button"
