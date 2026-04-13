@@ -49,38 +49,46 @@
     }
 
     .folder-subtab-shell {
+        --subtab-shell-pad-x: 1rem;
+        --subtab-caption-gap: 0.45rem;
+        --subtab-connector-thickness: 0.12rem;
+        --subtab-connector-color: rgba(16, 185, 129, 0.38);
+        --subtab-connector-start: calc(var(--subtab-shell-pad-x) + 0.85em);
+        --subtab-connector-length: clamp(4.4rem, 30%, 6.2rem);
+
         position: relative;
         border: 1px solid #d1fae5;
-        background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+        background: linear-gradient(180deg, #f7fdf9 0%, #eafaf1 100%);
         margin-top: 0.15rem;
         margin-inline: 0.6rem;
-        padding-top: 1.65rem;
+        padding-top: 1.95rem;
+        padding-inline: var(--subtab-shell-pad-x);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
     }
 
     .folder-subtab-shell::before {
         content: '';
         position: absolute;
-        top: -0.8rem;
-        left: var(--subtab-anchor-left, 1.7rem);
+        top: -0.72rem;
+        left: var(--subtab-connector-start);
         width: 0;
-        height: 0.8rem;
-        border-left: 2px solid rgba(16, 185, 129, 0.35);
+        height: 0.72rem;
+        border-left: var(--subtab-connector-thickness) solid var(--subtab-connector-color);
     }
 
     .folder-subtab-shell::after {
         content: '';
         position: absolute;
-        top: -0.1rem;
-        left: var(--subtab-anchor-left, 1.7rem);
-        width: 4.4rem;
-        border-top: 2px solid rgba(16, 185, 129, 0.35);
+        top: 0;
+        left: var(--subtab-connector-start);
+        width: var(--subtab-connector-length);
+        border-top: var(--subtab-connector-thickness) solid var(--subtab-connector-color);
     }
 
     .folder-subtab-caption {
         position: absolute;
-        top: 0.55rem;
-        left: 1rem;
+        top: 0.62rem;
+        left: var(--subtab-shell-pad-x);
         font-size: 0.68rem;
         letter-spacing: 0.06em;
         font-weight: 700;
@@ -90,6 +98,21 @@
         border: 1px solid rgba(16, 185, 129, 0.2);
         border-radius: 9999px;
         padding: 0.15rem 0.55rem;
+    }
+
+    @media (max-width: 640px) {
+        .folder-subtab-shell {
+            --subtab-shell-pad-x: 0.75rem;
+            --subtab-connector-start: calc(var(--subtab-shell-pad-x) + 0.75em);
+            --subtab-connector-length: clamp(3.35rem, 26%, 4.35rem);
+            margin-inline: 0.25rem;
+            padding-top: 1.75rem;
+        }
+
+        .folder-subtab-caption {
+            font-size: 0.62rem;
+            letter-spacing: 0.04em;
+        }
     }
 
     .folder-subtab {
