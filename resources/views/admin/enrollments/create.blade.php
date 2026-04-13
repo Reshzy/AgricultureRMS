@@ -5,6 +5,12 @@
 
 <div class="py-8">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-semibold text-emerald-900">New Enrollment</h1>
+            <a href="{{ route('admin.enrollments.index') }}" class="rounded-lg border border-emerald-900/20 px-3 py-2 text-emerald-700 transition hover:bg-emerald-50">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Enrollments
+            </a>
+        </div>
         <div class="bg-white/90 overflow-hidden shadow-xl sm:rounded-2xl p-6 space-y-10 border border-emerald-900/5">
             <form method="POST" action="{{ route('admin.enrollments.store') }}" enctype="multipart/form-data" class="space-y-6" id="enrollmentForm">
                 @csrf
@@ -333,10 +339,15 @@
                     </div>
                 </section>
 
-                <div class="flex justify-end gap-3 pt-4 border-t">
-                    <x-secondary-button type="button" onclick="document.getElementById('enrollmentForm').reset()">Clear</x-secondary-button>
-                    <button type="button" id="saveDraftBtn" class="px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white shadow">Save as Draft</button>
-                    <x-button type="submit">Submit</x-button>
+                <div class="flex items-center justify-between gap-3 pt-4 border-t">
+                    <a href="{{ route('admin.enrollments.index') }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">
+                        Go Back
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <x-secondary-button type="button" onclick="document.getElementById('enrollmentForm').reset()">Clear</x-secondary-button>
+                        <button type="button" id="saveDraftBtn" class="px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white shadow">Save as Draft</button>
+                        <x-button type="submit">Submit</x-button>
+                    </div>
                 </div>
             </form>
         </div>

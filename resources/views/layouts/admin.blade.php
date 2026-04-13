@@ -128,7 +128,8 @@
         }
 
         .tactile-shell {
-            display: flex;
+            display: grid;
+            grid-template-columns: 2.75rem 4rem 2.75rem;
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem;
@@ -178,33 +179,28 @@
             box-shadow: 0 18px 28px rgba(5, 150, 105, 0.52);
         }
 
-        .scroll-top-wrap {
-            width: 0;
-            margin-left: 0;
-            position: relative;
-            flex: 0 0 auto;
-            transition: width 0.25s ease, margin-left 0.25s ease;
-            overflow: visible;
-        }
-
-        .scroll-top-wrap.is-visible {
-            width: 2.75rem;
-            margin-left: 0.25rem;
-        }
-
         .scroll-top-btn {
-            position: relative;
-            z-index: 1;
-            opacity: 0;
-            transform: translateX(calc(-100% - 0.25rem)) scale(0.92);
+            width: 100%;
+            opacity: 0.72;
+            transform: scale(0.8);
+            color: #94a3b8;
+            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            border-color: rgba(148, 163, 184, 0.4);
+            box-shadow: none;
             pointer-events: none;
-            transition: transform 0.25s ease, opacity 0.25s ease;
+            cursor: not-allowed;
+            transition: transform 0.22s ease, opacity 0.22s ease, background-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
         }
 
         .scroll-top-btn.is-visible {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: scale(1);
+            color: rgb(6, 95, 70);
+            background: linear-gradient(180deg, #ffffff 0%, #ecfdf5 100%);
+            border-color: rgba(4, 120, 87, 0.15);
+            box-shadow: 0 8px 16px rgba(2, 44, 34, 0.16);
             pointer-events: auto;
+            cursor: pointer;
         }
     </style>
     <script>
@@ -279,7 +275,8 @@
 
                 const isVisible = window.scrollY > 0;
                 bottomScrollTopButton.classList.toggle('is-visible', isVisible);
-                bottomScrollTopButton.parentElement?.classList.toggle('is-visible', isVisible);
+                bottomScrollTopButton.disabled = !isVisible;
+                bottomScrollTopButton.setAttribute('aria-disabled', isVisible ? 'false' : 'true');
             };
 
             bottomScrollTopButton?.addEventListener('click', () => {
@@ -432,11 +429,9 @@
                 <i class="fa-solid fa-house"></i>
             </a>
 
-            <div class="scroll-top-wrap">
-                <button id="bottomScrollTopButton" type="button" class="tactile-btn scroll-top-btn" aria-label="Scroll to top">
-                    <i class="fa-solid fa-arrow-up"></i>
-                </button>
-            </div>
+            <button id="bottomScrollTopButton" type="button" class="tactile-btn scroll-top-btn" aria-label="Scroll to top" aria-disabled="true" disabled>
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
         </div>
     </div>
 
