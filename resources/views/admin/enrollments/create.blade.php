@@ -5,10 +5,67 @@
 
 <div class="py-8">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-semibold text-emerald-900">New Enrollment</h1>
+            <a href="{{ route('admin.enrollments.index') }}" class="rounded-lg border border-emerald-900/20 px-3 py-2 text-emerald-700 transition hover:bg-emerald-50">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Enrollments
+            </a>
+        </div>
         <div class="bg-white/90 overflow-hidden shadow-xl sm:rounded-2xl p-6 space-y-10 border border-emerald-900/5">
             <form method="POST" action="{{ route('admin.enrollments.store') }}" enctype="multipart/form-data" class="space-y-6" id="enrollmentForm">
                 @csrf
-                <div>
+                @include('admin.enrollments.partials.form_tabs_nav')
+
+                <section id="tab-personal-panel" role="tabpanel" aria-labelledby="tab-personal-trigger" data-tab-panel="personal" class="space-y-6">
+                <div class="folder-subtab-shell rounded-xl p-3">
+                    <p class="folder-subtab-caption">Part 1 sections</p>
+                    <div class="flex flex-wrap gap-2" role="tablist" aria-label="Part 1 groups" data-subtab-list="personal">
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-basic-trigger"
+                            aria-controls="subtab-basic-panel"
+                            aria-selected="true"
+                            data-subtab-trigger="basic"
+                            class="folder-subtab is-active inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Basic Personal Details</span>
+                            <span data-subtab-error-badge="basic" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-household-trigger"
+                            aria-controls="subtab-household-panel"
+                            aria-selected="false"
+                            data-subtab-trigger="household"
+                            class="folder-subtab inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Household IDs</span>
+                            <span data-subtab-error-badge="household" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-emergency-trigger"
+                            aria-controls="subtab-emergency-panel"
+                            aria-selected="false"
+                            data-subtab-trigger="emergency"
+                            class="folder-subtab inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Emergency Contact</span>
+                            <span data-subtab-error-badge="emergency" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <section id="subtab-basic-panel" role="tabpanel" aria-labelledby="subtab-basic-trigger" data-subtab-panel="basic">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div>
+                        <h4 class="text-base font-semibold text-emerald-900">Basic Personal Details</h4>
+                        <p class="text-xs text-gray-500">Identity, address, household context, and civil details.</p>
+                    </div>
+                    <div>
                     <div class="h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Part I: Personal Information</h3>
                 </div>
@@ -62,8 +119,11 @@
                 <div>
                     <x-label value="Address" />
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1 bg-emerald-50/50 border border-emerald-900/5 rounded-xl p-4">
-                        <x-input name="address_house_lot" class="js-clean" placeholder="House/lot/bldg.no./purok" />
-                        <div class="md:col-span-2">
+                        <div>
+                            <x-label value="House/lot/bldg.no./purok" />    
+                            <x-input name="address_house_lot" class="js-clean w-full" placeholder="House/lot/bldg.no./purok" />
+                        </div>
+                        <div>
                             <x-label value="Street/Sitio/Subdv." />
                             <x-input name="address_street" class="js-clean w-full" placeholder="Street/Sitio/Subdv." list="streetDatalist" />
                             <datalist id="streetDatalist"></datalist>
@@ -161,7 +221,16 @@
                     <div><x-label value="Mother's Maiden Name" /><x-input name="mothers_maiden_name" class="mt-1 w-full js-clean" placeholder="Surname, Firstname Middlename" /></div>
                 </div>
 
-                <div class="mt-4">
+                </div>
+                </section>
+
+                <section id="subtab-household-panel" role="tabpanel" aria-labelledby="subtab-household-trigger" data-subtab-panel="household" class="hidden">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div>
+                        <h4 class="text-base font-semibold text-emerald-900">Household & IDs</h4>
+                        <p class="text-xs text-gray-500">Family, social indicators, and government ID information.</p>
+                    </div>
+                    <div class="mt-4">
                     <div class="h-1 w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Household & IDs</h3>
                 </div>
@@ -201,7 +270,16 @@
                     <x-input name="government_id_number" id="govIdNumber" placeholder="ID Number" disabled />
                 </div>
 
-                <div class="mt-4">
+                </div>
+                </section>
+
+                <section id="subtab-emergency-panel" role="tabpanel" aria-labelledby="subtab-emergency-trigger" data-subtab-panel="emergency" class="hidden">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div>
+                        <h4 class="text-base font-semibold text-emerald-900">Emergency Contact</h4>
+                        <p class="text-xs text-gray-500">Who to contact in case of emergency.</p>
+                    </div>
+                    <div class="mt-4">
                     <div class="h-1 w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Emergency Contact</h3>
                 </div>
@@ -209,8 +287,13 @@
                     <div><x-label value="Emergency Contact" /><x-input name="emergency_contact_name" class="mt-1 w-full js-clean" placeholder="Surname, Firstname Middlename" /></div>
                     <div><x-label value="Emergency Contact Number" /><x-input name="emergency_contact_number" class="mt-1 w-full" /></div>
                 </div>
+                </div>
+                </section>
+                </section>
 
-                <div class="mt-4">
+                <section id="tab-farm-panel" role="tabpanel" aria-labelledby="tab-farm-trigger" data-tab-panel="farm" class="space-y-6 hidden">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div class="mt-4">
                     <div class="h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Part II: Farm Profile</h3>
                 </div>
@@ -224,81 +307,7 @@
                     </div>
                 </div>
 
-                <div id="farmersSection" class="hidden">
-                    <x-label value="For Farmers" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1 bg-emerald-50/50 border border-emerald-900/5 rounded-xl p-4">
-                        <label class="inline-flex items-center"><input type="checkbox" name="farming_activities[]" value="rice" class="text-emerald-600"><span class="ml-2">Rice</span></label>
-                        <label class="inline-flex items-center"><input type="checkbox" name="farming_activities[]" value="corn" class="text-emerald-600"><span class="ml-2">Corn</span></label>
-                    </div>
-                    <div class="mt-3">
-                        <x-label value="Other Crops (specify)" />
-                        <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 gap-2" id="cropChips"></div>
-                        <div class="mt-2 flex gap-2"><x-input id="cropInput" placeholder="Add crop..." class="flex-1" /><x-secondary-button type="button" id="addCropBtn">Add</x-secondary-button></div>
-                        <div id="cropHidden"></div>
-                    </div>
-                    <div class="mt-3">
-                        <x-label value="Livestock (specify)" />
-                        <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 gap-2" id="livestockChips"></div>
-                        <div class="mt-2 flex gap-2"><x-input id="livestockInput" placeholder="Add livestock..." class="flex-1" /><x-secondary-button type="button" id="addLivestockBtn">Add</x-secondary-button></div>
-                        <div id="livestockHidden"></div>
-                    </div>
-                    <div class="mt-3">
-                        <x-label value="Poultry (specify)" />
-                        <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 gap-2" id="poultryChips"></div>
-                        <div class="mt-2 flex gap-2"><x-input id="poultryInput" placeholder="Add poultry..." class="flex-1" /><x-secondary-button type="button" id="addPoultryBtn">Add</x-secondary-button></div>
-                        <div id="poultryHidden"></div>
-                    </div>
-                </div>
-
-                <div id="farmworkersSection" class="hidden">
-                    <x-label value="For Farmworkers" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
-                        @foreach (['Land preparation','Planting/Transplanting','Cultivation','Harvesting'] as $work)
-                        <label class="inline-flex items-center"><input type="checkbox" name="farmworker_kinds_of_work[]" value="{{ $work }}" class="text-emerald-600"><span class="ml-2">{{ $work }}</span></label>
-                        @endforeach
-                    </div>
-                    <div class="mt-3">
-                        <x-label value="Others, specify" />
-                        <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 gap-2" id="fwOtherChips"></div>
-                        <div class="mt-2 flex gap-2"><x-input id="fwOtherInput" placeholder="Add other work..." class="flex-1" /><x-secondary-button type="button" id="addFwOtherBtn">Add</x-secondary-button></div>
-                        <div id="fwOtherHidden"></div>
-                    </div>
-                </div>
-
-                <div id="fisherfolkSection" class="hidden">
-                    <x-label value="For Fisherfolk" />
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
-                        @foreach (['Fish capture','Fish Processing','Aquaculture','Fish Vending','Gleaning'] as $f)
-                        <label class="inline-flex items-center"><input type="checkbox" name="fishing_activities[]" value="{{ $f }}" class="text-emerald-600"><span class="ml-2">{{ $f }}</span></label>
-                        @endforeach
-                    </div>
-                    <div class="mt-3">
-                        <x-label value="Others, specify" />
-                        <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 gap-2" id="fishOtherChips"></div>
-                        <div class="mt-2 flex gap-2"><x-input id="fishOtherInput" placeholder="Add other activity..." class="flex-1" /><x-secondary-button type="button" id="addFishOtherBtn">Add</x-secondary-button></div>
-                        <div id="fishOtherHidden"></div>
-                    </div>
-                </div>
-
-                <div id="agriYouthSection" class="hidden">
-                    <x-label value="For Agri Youth" />
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-1">
-                        @foreach ([
-                        'part of a farming household',
-                        'attending/attended formal agri-fishery related course',
-                        'attending/attended non-formal agri-fishery related course',
-                        'participated in any agricultural activity/program'
-                        ] as $y)
-                        <label class="inline-flex items-center"><input type="checkbox" name="agriyouth_involvements[]" value="{{ $y }}" class="text-emerald-600"><span class="ml-2">{{ $y }}</span></label>
-                        @endforeach
-                    </div>
-                    <div class="mt-3">
-                        <x-label value="Others, specify" />
-                        <div class="flex flex-wrap items-center border border-gray-300 rounded-md px-3 py-2 gap-2" id="youthOtherChips"></div>
-                        <div class="mt-2 flex gap-2"><x-input id="youthOtherInput" placeholder="Add involvement..." class="flex-1" /><x-secondary-button type="button" id="addYouthOtherBtn">Add</x-secondary-button></div>
-                        <div id="youthOtherHidden"></div>
-                    </div>
-                </div>
+                @include('admin.enrollments.partials.livelihood_sections')
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-emerald-50/50 border border-emerald-900/5 rounded-xl p-4">
                     <div><x-label value="Gross Annual Income (Farming)" /><x-input type="number" step="0.01" name="gross_income_farming" class="mt-1 w-full" /></div>
@@ -313,82 +322,40 @@
                         <x-input name="rotation_farmers_p3" placeholder="(p3)" />
                     </div>
                 </div>
-
-                <div>
-                    <x-label value="Farm Parcels" />
-                    <div id="parcelsContainer" class="space-y-4 mt-2"></div>
-                    <button type="button" id="addParcelBtn" class="mt-2 px-3 py-2 rounded-lg bg-white hover:bg-emerald-50 text-emerald-900 border">Add Parcel</button>
                 </div>
+                </section>
 
-                <div class="flex justify-end gap-3 pt-4 border-t">
-                    <x-secondary-button type="button" onclick="document.getElementById('enrollmentForm').reset()">Clear</x-secondary-button>
-                    <button type="button" id="saveDraftBtn" class="px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white shadow">Save as Draft</button>
-                    <x-button type="submit">Submit</x-button>
+                <section id="tab-parcels-panel" role="tabpanel" aria-labelledby="tab-parcels-trigger" data-tab-panel="parcels" class="space-y-6 hidden">
+                    <div class="space-y-4 rounded-xl border border-emerald-100 bg-white p-5">
+                        <div>
+                            <h4 class="text-base font-semibold text-emerald-900">Farm Parcels</h4>
+                            <p class="text-xs text-gray-500">Add one or more parcels, then add crop, livestock, or poultry items per parcel.</p>
+                        </div>
+                        <div>
+                            <x-label value="Farm Parcels" />
+                            <div id="parcelsContainer" class="space-y-4 mt-2"></div>
+                            <button type="button" id="addParcelBtn" class="mt-2 px-3 py-2 rounded-lg bg-white hover:bg-emerald-50 text-emerald-900 border">Add Parcel</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="flex items-center justify-between gap-3 pt-4 border-t">
+                    <a href="{{ route('admin.enrollments.index') }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">
+                        Go Back
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <x-secondary-button type="button" onclick="document.getElementById('enrollmentForm').reset()">Clear</x-secondary-button>
+                        <button type="button" id="saveDraftBtn" class="px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white shadow">Save as Draft</button>
+                        <x-button type="submit">Submit</x-button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<template id="parcelTemplate">
-    <div class="p-4 border rounded-md grid grid-cols-1 md:grid-cols-3 gap-3 parcel-card">
-        <div>
-            <x-label value="Barangay" />
-            <select class="w-full border-gray-300 rounded-md parcelBrgy"></select>
-            <input type="hidden" name="parcels[INDEX][barangay]" />
-        </div>
-        <div>
-            <x-label value="Municipality/City" />
-            <select class="w-full border-gray-300 rounded-md parcelCity"></select>
-            <input type="hidden" name="parcels[INDEX][municipality]" />
-        </div>
-        <x-input type="number" step="0.01" name="parcels[INDEX][total_farm_area_ha]" placeholder="Total Farm Area (ha)" />
-        <x-input name="parcels[INDEX][ownership_document_no]" placeholder="Ownership Doc No" />
-        <label class="inline-flex items-center"><input type="checkbox" name="parcels[INDEX][within_ancestral_domain]" value="1" class="text-emerald-600"><span class="ml-2">Within Ancestral Domain</span></label>
-        <label class="inline-flex items-center"><input type="checkbox" name="parcels[INDEX][is_agrarian_reform_beneficiary]" value="1" class="text-emerald-600"><span class="ml-2">Agrarian Reform Beneficiary</span></label>
-        <select name="parcels[INDEX][ownership_type]" class="border-gray-300 rounded-md">
-            <option value="">Ownership Type</option>
-            <option value="registered_owner">Registered Owner</option>
-            <option value="tenant">Tenant</option>
-            <option value="lessee">Lessee</option>
-            <option value="others">Others</option>
-        </select>
-        <x-input name="parcels[INDEX][land_owner_name]" placeholder="Land Owner Name" disabled />
-        <x-input name="parcels[INDEX][ownership_other_specify]" placeholder="Ownership Other (specify)" disabled />
-        <div class="md:col-span-3 col-span-1">
-            <x-label value="Items (Crop/Commodity/Livestock & Poultry)" />
-            <div class="space-y-2 parcel-items"></div>
-            <button type="button" class="addParcelItemBtn mt-2 px-3 py-2 rounded-lg bg-white hover:bg-emerald-50 text-emerald-900 border">Add Item</button>
-        </div>
-        <div class="flex gap-2">
-            <button type="button" class="duplicateParcelBtn px-3 py-2 rounded-lg bg-white hover:bg-emerald-50 text-emerald-900 border">Duplicate</button>
-            <button type="button" class="removeParcelBtn px-3 py-2 rounded-lg bg-white hover:bg-rose-50 text-rose-700 border">Remove</button>
-        </div>
-    </div>
-</template>
-
-<template id="parcelItemTemplate">
-    <div class="p-3 border rounded parcel-item grid grid-cols-1 md:grid-cols-6 gap-2">
-        <select name="parcels[PARIDX][items][ITEMIDX][kind]" class="border-gray-300 rounded-md kindSelect">
-            <option value="crop">Crop/Commodity</option>
-            <option value="livestock">Livestock</option>
-            <option value="poultry">Poultry</option>
-        </select>
-        <x-input name="parcels[PARIDX][items][ITEMIDX][name]" placeholder="Name (e.g., Rice, Chicken, Cow)" />
-        <x-input type="number" step="0.01" name="parcels[PARIDX][items][ITEMIDX][size_ha]" placeholder="Size (ha)" />
-        <x-input type="number" name="parcels[PARIDX][items][ITEMIDX][num_of_head]" class="numOfHead" placeholder="No. of head" />
-        <x-input name="parcels[PARIDX][items][ITEMIDX][farm_type]" placeholder="Farm type" />
-        <div class="flex items-center gap-2">
-            <label class="inline-flex items-center"><input type="checkbox" name="parcels[PARIDX][items][ITEMIDX][is_organic_practitioner]" value="1" class="text-emerald-600"><span class="ml-2">Organic Practitioner</span></label>
-        </div>
-        <div class="md:col-span-5">
-            <x-input name="parcels[PARIDX][items][ITEMIDX][remarks]" placeholder="Remarks" />
-        </div>
-        <div class="flex gap-2">
-            <x-secondary-button type="button" class="removeParcelItemBtn">Remove Item</x-secondary-button>
-        </div>
-    </div>
-</template>
+@include('admin.enrollments.partials.templates')
+<script type="application/json" id="enrollmentErrorKeys">@json($errors->keys())</script>
 <style>
     /* Dim any disabled controls within this form */
     #enrollmentForm input[disabled],
@@ -416,6 +383,198 @@
         };
         addBtn.addEventListener('click', addParcel);
         addParcel();
+
+        const formEl = document.getElementById('enrollmentForm');
+        const tabList = formEl?.querySelector('[data-tab-list]');
+        const tabButtons = tabList ? Array.from(tabList.querySelectorAll('[data-tab-trigger]')) : [];
+        const tabPanels = formEl ? Array.from(formEl.querySelectorAll('[data-tab-panel]')) : [];
+        const personalSubTabList = formEl?.querySelector('[data-subtab-list="personal"]');
+        const personalSubTabButtons = personalSubTabList ? Array.from(personalSubTabList.querySelectorAll('[data-subtab-trigger]')) : [];
+        const personalSubTabPanels = formEl ? Array.from(formEl.querySelectorAll('[data-subtab-panel]')) : [];
+        const serverErrorKeys = JSON.parse(document.getElementById('enrollmentErrorKeys')?.textContent ?? '[]');
+        const farmErrorPrefixes = [
+            'main_livelihood',
+            'farming_activities',
+            'farmworker_kinds_of_work',
+            'fishing_activities',
+            'agriyouth_involvements',
+            'gross_income_farming',
+            'gross_income_non_farming',
+            'rotation_farmers_',
+        ];
+        const resolveTabByErrorKey = (key) => {
+            if (!key) {
+                return 'personal';
+            }
+            if (key.startsWith('parcels.')) {
+                return 'parcels';
+            }
+            if (farmErrorPrefixes.some((prefix) => key.startsWith(prefix))) {
+                return 'farm';
+            }
+            return 'personal';
+        };
+        const animateTabHighlight = (button) => {
+            if (!button) {
+                return;
+            }
+            button.classList.remove('tab-highlight-pop');
+            // Force reflow so animation replays for consecutive activations.
+            void button.offsetWidth;
+            button.classList.add('tab-highlight-pop');
+            window.setTimeout(() => {
+                button.classList.remove('tab-highlight-pop');
+            }, 320);
+        };
+        const activateTab = (tabName, shouldFocus = false, shouldAnimate = true) => {
+            tabButtons.forEach((button) => {
+                const isActive = button.dataset.tabTrigger === tabName;
+                button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                button.classList.toggle('is-active', isActive);
+                if (isActive && shouldAnimate) {
+                    animateTabHighlight(button);
+                }
+                if (shouldFocus && isActive) {
+                    button.focus();
+                }
+            });
+            tabPanels.forEach((panel) => {
+                const isActive = panel.dataset.tabPanel === tabName;
+                panel.classList.toggle('hidden', !isActive);
+            });
+        };
+        const resolvePersonalSubtabByErrorKey = (key) => {
+            if (!key) {
+                return 'basic';
+            }
+            if (key.startsWith('emergency_contact_')) {
+                return 'emergency';
+            }
+            if (key.startsWith('household_') || key.startsWith('government_id_') || key.startsWith('indigenous_group_')) {
+                return 'household';
+            }
+            if ([
+                'is_pwd',
+                'is_four_ps_beneficiary',
+                'is_indigenous_group_member',
+                'has_government_id',
+            ].includes(key)) {
+                return 'household';
+            }
+            return 'basic';
+        };
+        const activatePersonalSubtab = (subtabName, shouldFocus = false, shouldAnimate = true) => {
+            personalSubTabButtons.forEach((button) => {
+                const isActive = button.dataset.subtabTrigger === subtabName;
+                button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                button.classList.toggle('is-active', isActive);
+                if (isActive && shouldAnimate) {
+                    animateTabHighlight(button);
+                }
+                if (shouldFocus && isActive) {
+                    button.focus();
+                }
+            });
+            personalSubTabPanels.forEach((panel) => {
+                const isActive = panel.dataset.subtabPanel === subtabName;
+                panel.classList.toggle('hidden', !isActive);
+            });
+        };
+        if (tabButtons.length && tabPanels.length) {
+            const tabErrorCounts = { personal: 0, farm: 0, parcels: 0 };
+            serverErrorKeys.forEach((key) => {
+                const tabName = resolveTabByErrorKey(key);
+                tabErrorCounts[tabName] = (tabErrorCounts[tabName] ?? 0) + 1;
+            });
+            Object.entries(tabErrorCounts).forEach(([tabName, count]) => {
+                const badge = tabList.querySelector(`[data-tab-error-badge="${tabName}"]`);
+                if (!badge) {
+                    return;
+                }
+                if (count > 0) {
+                    badge.textContent = String(count);
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.textContent = '';
+                    badge.classList.add('hidden');
+                }
+            });
+            tabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    activateTab(button.dataset.tabTrigger);
+                });
+                button.addEventListener('keydown', (event) => {
+                    const total = tabButtons.length;
+                    let nextIndex = null;
+                    if (event.key === 'ArrowRight') {
+                        nextIndex = (index + 1) % total;
+                    } else if (event.key === 'ArrowLeft') {
+                        nextIndex = (index - 1 + total) % total;
+                    } else if (event.key === 'Home') {
+                        nextIndex = 0;
+                    } else if (event.key === 'End') {
+                        nextIndex = total - 1;
+                    }
+                    if (nextIndex === null) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const nextButton = tabButtons[nextIndex];
+                    activateTab(nextButton.dataset.tabTrigger, true);
+                });
+            });
+            const firstErrorTab = serverErrorKeys.length > 0 ? resolveTabByErrorKey(serverErrorKeys[0]) : 'personal';
+            activateTab(firstErrorTab, false, false);
+        }
+        if (personalSubTabButtons.length && personalSubTabPanels.length) {
+            const personalSubtabErrorCounts = { basic: 0, household: 0, emergency: 0 };
+            serverErrorKeys.forEach((key) => {
+                if (resolveTabByErrorKey(key) !== 'personal') {
+                    return;
+                }
+                const subtabName = resolvePersonalSubtabByErrorKey(key);
+                personalSubtabErrorCounts[subtabName] = (personalSubtabErrorCounts[subtabName] ?? 0) + 1;
+            });
+            Object.entries(personalSubtabErrorCounts).forEach(([subtabName, count]) => {
+                const badge = personalSubTabList.querySelector(`[data-subtab-error-badge="${subtabName}"]`);
+                if (!badge) {
+                    return;
+                }
+                if (count > 0) {
+                    badge.textContent = String(count);
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.textContent = '';
+                    badge.classList.add('hidden');
+                }
+            });
+            personalSubTabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    activatePersonalSubtab(button.dataset.subtabTrigger);
+                });
+                button.addEventListener('keydown', (event) => {
+                    const total = personalSubTabButtons.length;
+                    let nextIndex = null;
+                    if (event.key === 'ArrowRight') {
+                        nextIndex = (index + 1) % total;
+                    } else if (event.key === 'ArrowLeft') {
+                        nextIndex = (index - 1 + total) % total;
+                    } else if (event.key === 'Home') {
+                        nextIndex = 0;
+                    } else if (event.key === 'End') {
+                        nextIndex = total - 1;
+                    }
+                    if (nextIndex === null) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const nextButton = personalSubTabButtons[nextIndex];
+                    activatePersonalSubtab(nextButton.dataset.subtabTrigger, true);
+                });
+            });
+            const firstErrorPersonalSubtab = serverErrorKeys.length > 0 ? resolvePersonalSubtabByErrorKey(serverErrorKeys[0]) : 'basic';
+            activatePersonalSubtab(firstErrorPersonalSubtab, false, false);
+        }
 
         // 2x2 image preview and camera capture
         const photoInput = document.getElementById('photo');
@@ -998,7 +1157,6 @@
 
         // Draft handling
         const saveDraftBtn = document.getElementById('saveDraftBtn');
-        const formEl = document.getElementById('enrollmentForm');
         // ensure hidden status field exists
         let statusHidden = formEl.querySelector('input[name="status"]');
         if (!statusHidden) {

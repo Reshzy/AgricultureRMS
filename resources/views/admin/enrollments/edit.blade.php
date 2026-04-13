@@ -5,11 +5,67 @@
 
 <div class="py-8">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-semibold text-emerald-900">Edit Enrollment</h1>
+            <a href="{{ route('admin.enrollments.index') }}" class="rounded-lg border border-emerald-900/20 px-3 py-2 text-emerald-700 transition hover:bg-emerald-50">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Enrollments
+            </a>
+        </div>
         <div class="bg-white/90 overflow-hidden shadow-xl sm:rounded-2xl p-6 space-y-10 border border-emerald-900/5">
             <form method="POST" action="{{ route('admin.enrollments.update', $enrollment) }}" enctype="multipart/form-data" class="space-y-6" id="enrollmentForm">
                 @csrf
                 @method('PUT')
+                @include('admin.enrollments.partials.form_tabs_nav')
 
+                <section id="tab-personal-panel" role="tabpanel" aria-labelledby="tab-personal-trigger" data-tab-panel="personal" class="space-y-6">
+                <div class="folder-subtab-shell rounded-xl p-3">
+                    <p class="folder-subtab-caption">Part 1 sections</p>
+                    <div class="flex flex-wrap gap-2" role="tablist" aria-label="Part 1 groups" data-subtab-list="personal">
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-basic-trigger"
+                            aria-controls="subtab-basic-panel"
+                            aria-selected="true"
+                            data-subtab-trigger="basic"
+                            class="folder-subtab is-active inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Basic Personal Details</span>
+                            <span data-subtab-error-badge="basic" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-household-trigger"
+                            aria-controls="subtab-household-panel"
+                            aria-selected="false"
+                            data-subtab-trigger="household"
+                            class="folder-subtab inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Household IDs</span>
+                            <span data-subtab-error-badge="household" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-emergency-trigger"
+                            aria-controls="subtab-emergency-panel"
+                            aria-selected="false"
+                            data-subtab-trigger="emergency"
+                            class="folder-subtab inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Emergency Contact</span>
+                            <span data-subtab-error-badge="emergency" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <section id="subtab-basic-panel" role="tabpanel" aria-labelledby="subtab-basic-trigger" data-subtab-panel="basic">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div>
+                        <h4 class="text-base font-semibold text-emerald-900">Basic Personal Details</h4>
+                        <p class="text-xs text-gray-500">Identity, address, household context, and civil details.</p>
+                    </div>
                 <div>
                     <div class="h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Part I: Personal Information</h3>
@@ -64,8 +120,11 @@
                 <div>
                     <x-label value="Address" />
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1 bg-emerald-50/50 border border-emerald-900/5 rounded-xl p-4">
-                        <x-input name="address_house_lot" class="js-clean" placeholder="House/lot/bldg.no./purok" value="{{ old('address_house_lot', $enrollment->address_house_lot) }}" />
-                        <div class="md:col-span-2">
+                        <div>
+                            <x-label value="House/lot/bldg.no./purok" />    
+                            <x-input name="address_house_lot" class="js-clean w-full" placeholder="House/lot/bldg.no./purok" />
+                        </div>
+                        <div>
                             <x-label value="Street/Sitio/Subdv." />
                             <x-input name="address_street" class="js-clean w-full" placeholder="Street/Sitio/Subdv." list="streetDatalist" value="{{ old('address_street', $enrollment->address_street) }}" />
                             <datalist id="streetDatalist"></datalist>
@@ -157,6 +216,15 @@
                     <div><x-label value="Mother's Maiden Name" /><x-input name="mothers_maiden_name" class="mt-1 w-full js-clean" placeholder="Surname, Firstname Middlename" value="{{ old('mothers_maiden_name', $enrollment->mothers_maiden_name) }}" /></div>
                 </div>
 
+                </div>
+                </section>
+
+                <section id="subtab-household-panel" role="tabpanel" aria-labelledby="subtab-household-trigger" data-subtab-panel="household" class="hidden">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div>
+                        <h4 class="text-base font-semibold text-emerald-900">Household & IDs</h4>
+                        <p class="text-xs text-gray-500">Family, social indicators, and government ID information.</p>
+                    </div>
                 <div class="mt-4">
                     <div class="h-1 w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Household & IDs</h3>
@@ -196,6 +264,15 @@
                     </div>
                 </div>
 
+                </div>
+                </section>
+
+                <section id="subtab-emergency-panel" role="tabpanel" aria-labelledby="subtab-emergency-trigger" data-subtab-panel="emergency" class="hidden">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
+                    <div>
+                        <h4 class="text-base font-semibold text-emerald-900">Emergency Contact</h4>
+                        <p class="text-xs text-gray-500">Who to contact in case of emergency.</p>
+                    </div>
                 <div class="mt-4">
                     <div class="h-1 w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Emergency Contact</h3>
@@ -205,7 +282,12 @@
                     <div><x-label value="Name" /><x-input name="emergency_contact_name" class="mt-1 w-full js-clean" placeholder="Surname, Firstname Middlename" value="{{ old('emergency_contact_name', $enrollment->emergency_contact_name) }}" /></div>
                     <div><x-label value="Contact Number" /><x-input name="emergency_contact_number" class="mt-1 w-full" value="{{ old('emergency_contact_number', $enrollment->emergency_contact_number) }}" /></div>
                 </div>
+                </div>
+                </section>
+                </section>
 
+                <section id="tab-farm-panel" role="tabpanel" aria-labelledby="tab-farm-trigger" data-tab-panel="farm" class="space-y-6 hidden">
+                <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
                 <div class="mt-4">
                     <div class="h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 rounded"></div>
                     <h3 class="mt-3 text-lg font-semibold text-emerald-900">Part II: Farm Profile</h3>
@@ -223,12 +305,6 @@
 
                 @include('admin.enrollments.partials.livelihood_sections')
 
-                <div>
-                    <x-label value="Farm Parcels" />
-                    <div id="parcelsContainer" class="space-y-4 mt-2"></div>
-                    <button type="button" id="addParcelBtn" class="mt-2 px-3 py-2 rounded-lg bg-white hover:bg-emerald-50 text-emerald-900 border">Add Parcel</button>
-                </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><x-label value="Gross Annual Income (Farming)" /><x-input type="number" step="0.01" name="gross_income_farming" class="mt-1 w-full" value="{{ old('gross_income_farming', $enrollment->gross_income_farming) }}" /></div>
                     <div><x-label value="Gross Annual Income (Non-farming)" /><x-input type="number" step="0.01" name="gross_income_non_farming" class="mt-1 w-full" value="{{ old('gross_income_non_farming', $enrollment->gross_income_non_farming) }}" /></div>
@@ -242,11 +318,32 @@
                         <x-input name="rotation_farmers_p3" placeholder="(p3)" value="{{ old('rotation_farmers_p3', $enrollment->rotation_farmers_p3) }}" />
                     </div>
                 </div>
+                </div>
+                </section>
 
-                <div class="flex justify-end gap-3 pt-4 border-t">
-                    <!-- <x-secondary-button type="button" onclick="document.getElementById('enrollmentForm').reset()">Reset</x-secondary-button> -->
-                    <button type="button" id="saveDraftBtn" class="px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white shadow" title="Waiting for information to load, please wait...">Save as Draft</button>
-                    <x-button type="submit" id="updateBtn" title="Waiting for information to load, please wait...">Update</x-button>
+                <section id="tab-parcels-panel" role="tabpanel" aria-labelledby="tab-parcels-trigger" data-tab-panel="parcels" class="space-y-6 hidden">
+                    <div class="space-y-4 rounded-xl border border-emerald-100 bg-white p-5">
+                        <div>
+                            <h4 class="text-base font-semibold text-emerald-900">Farm Parcels</h4>
+                            <p class="text-xs text-gray-500">Add one or more parcels, then add crop, livestock, or poultry items per parcel.</p>
+                        </div>
+                        <div>
+                            <x-label value="Farm Parcels" />
+                            <div id="parcelsContainer" class="space-y-4 mt-2"></div>
+                            <button type="button" id="addParcelBtn" class="mt-2 px-3 py-2 rounded-lg bg-white hover:bg-emerald-50 text-emerald-900 border">Add Parcel</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="flex items-center justify-between gap-3 pt-4 border-t">
+                    <a href="{{ route('admin.enrollments.index') }}" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50">
+                        Go Back
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <!-- <x-secondary-button type="button" onclick="document.getElementById('enrollmentForm').reset()">Reset</x-secondary-button> -->
+                        <button type="button" id="saveDraftBtn" class="px-4 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white shadow" title="Waiting for information to load, please wait...">Save as Draft</button>
+                        <x-button type="submit" id="updateBtn" title="Waiting for information to load, please wait...">Update</x-button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -254,6 +351,8 @@
 </div>
 
 @include('admin.enrollments.partials.templates')
+<script type="application/json" id="enrollmentEditData">@json($enrollment->load('farmParcels.items')->toArray())</script>
+<script type="application/json" id="enrollmentErrorKeys">@json($errors->keys())</script>
 
 @push('scripts')
 <script>
@@ -268,7 +367,198 @@
                 });
             };
         }
-        const data = @json($enrollment->load('farmParcels.items')->toArray());
+        const data = JSON.parse(document.getElementById('enrollmentEditData')?.textContent ?? '{}');
+        const formEl = document.getElementById('enrollmentForm');
+        const tabList = formEl?.querySelector('[data-tab-list]');
+        const tabButtons = tabList ? Array.from(tabList.querySelectorAll('[data-tab-trigger]')) : [];
+        const tabPanels = formEl ? Array.from(formEl.querySelectorAll('[data-tab-panel]')) : [];
+        const personalSubTabList = formEl?.querySelector('[data-subtab-list="personal"]');
+        const personalSubTabButtons = personalSubTabList ? Array.from(personalSubTabList.querySelectorAll('[data-subtab-trigger]')) : [];
+        const personalSubTabPanels = formEl ? Array.from(formEl.querySelectorAll('[data-subtab-panel]')) : [];
+        const serverErrorKeys = JSON.parse(document.getElementById('enrollmentErrorKeys')?.textContent ?? '[]');
+        const farmErrorPrefixes = [
+            'main_livelihood',
+            'farming_activities',
+            'farmworker_kinds_of_work',
+            'fishing_activities',
+            'agriyouth_involvements',
+            'gross_income_farming',
+            'gross_income_non_farming',
+            'rotation_farmers_',
+        ];
+        const resolveTabByErrorKey = (key) => {
+            if (!key) {
+                return 'personal';
+            }
+            if (key.startsWith('parcels.')) {
+                return 'parcels';
+            }
+            if (farmErrorPrefixes.some((prefix) => key.startsWith(prefix))) {
+                return 'farm';
+            }
+            return 'personal';
+        };
+        const animateTabHighlight = (button) => {
+            if (!button) {
+                return;
+            }
+            button.classList.remove('tab-highlight-pop');
+            // Force reflow so animation replays for consecutive activations.
+            void button.offsetWidth;
+            button.classList.add('tab-highlight-pop');
+            window.setTimeout(() => {
+                button.classList.remove('tab-highlight-pop');
+            }, 320);
+        };
+        const activateTab = (tabName, shouldFocus = false, shouldAnimate = true) => {
+            tabButtons.forEach((button) => {
+                const isActive = button.dataset.tabTrigger === tabName;
+                button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                button.classList.toggle('is-active', isActive);
+                if (isActive && shouldAnimate) {
+                    animateTabHighlight(button);
+                }
+                if (shouldFocus && isActive) {
+                    button.focus();
+                }
+            });
+            tabPanels.forEach((panel) => {
+                const isActive = panel.dataset.tabPanel === tabName;
+                panel.classList.toggle('hidden', !isActive);
+            });
+        };
+        const resolvePersonalSubtabByErrorKey = (key) => {
+            if (!key) {
+                return 'basic';
+            }
+            if (key.startsWith('emergency_contact_')) {
+                return 'emergency';
+            }
+            if (key.startsWith('household_') || key.startsWith('government_id_') || key.startsWith('indigenous_group_')) {
+                return 'household';
+            }
+            if ([
+                'is_pwd',
+                'is_four_ps_beneficiary',
+                'is_indigenous_group_member',
+                'has_government_id',
+            ].includes(key)) {
+                return 'household';
+            }
+            return 'basic';
+        };
+        const activatePersonalSubtab = (subtabName, shouldFocus = false, shouldAnimate = true) => {
+            personalSubTabButtons.forEach((button) => {
+                const isActive = button.dataset.subtabTrigger === subtabName;
+                button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                button.classList.toggle('is-active', isActive);
+                if (isActive && shouldAnimate) {
+                    animateTabHighlight(button);
+                }
+                if (shouldFocus && isActive) {
+                    button.focus();
+                }
+            });
+            personalSubTabPanels.forEach((panel) => {
+                const isActive = panel.dataset.subtabPanel === subtabName;
+                panel.classList.toggle('hidden', !isActive);
+            });
+        };
+        if (tabButtons.length && tabPanels.length) {
+            const tabErrorCounts = { personal: 0, farm: 0, parcels: 0 };
+            serverErrorKeys.forEach((key) => {
+                const tabName = resolveTabByErrorKey(key);
+                tabErrorCounts[tabName] = (tabErrorCounts[tabName] ?? 0) + 1;
+            });
+            Object.entries(tabErrorCounts).forEach(([tabName, count]) => {
+                const badge = tabList.querySelector(`[data-tab-error-badge="${tabName}"]`);
+                if (!badge) {
+                    return;
+                }
+                if (count > 0) {
+                    badge.textContent = String(count);
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.textContent = '';
+                    badge.classList.add('hidden');
+                }
+            });
+            tabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    activateTab(button.dataset.tabTrigger);
+                });
+                button.addEventListener('keydown', (event) => {
+                    const total = tabButtons.length;
+                    let nextIndex = null;
+                    if (event.key === 'ArrowRight') {
+                        nextIndex = (index + 1) % total;
+                    } else if (event.key === 'ArrowLeft') {
+                        nextIndex = (index - 1 + total) % total;
+                    } else if (event.key === 'Home') {
+                        nextIndex = 0;
+                    } else if (event.key === 'End') {
+                        nextIndex = total - 1;
+                    }
+                    if (nextIndex === null) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const nextButton = tabButtons[nextIndex];
+                    activateTab(nextButton.dataset.tabTrigger, true);
+                });
+            });
+            const firstErrorTab = serverErrorKeys.length > 0 ? resolveTabByErrorKey(serverErrorKeys[0]) : 'personal';
+            activateTab(firstErrorTab, false, false);
+        }
+        if (personalSubTabButtons.length && personalSubTabPanels.length) {
+            const personalSubtabErrorCounts = { basic: 0, household: 0, emergency: 0 };
+            serverErrorKeys.forEach((key) => {
+                if (resolveTabByErrorKey(key) !== 'personal') {
+                    return;
+                }
+                const subtabName = resolvePersonalSubtabByErrorKey(key);
+                personalSubtabErrorCounts[subtabName] = (personalSubtabErrorCounts[subtabName] ?? 0) + 1;
+            });
+            Object.entries(personalSubtabErrorCounts).forEach(([subtabName, count]) => {
+                const badge = personalSubTabList.querySelector(`[data-subtab-error-badge="${subtabName}"]`);
+                if (!badge) {
+                    return;
+                }
+                if (count > 0) {
+                    badge.textContent = String(count);
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.textContent = '';
+                    badge.classList.add('hidden');
+                }
+            });
+            personalSubTabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    activatePersonalSubtab(button.dataset.subtabTrigger);
+                });
+                button.addEventListener('keydown', (event) => {
+                    const total = personalSubTabButtons.length;
+                    let nextIndex = null;
+                    if (event.key === 'ArrowRight') {
+                        nextIndex = (index + 1) % total;
+                    } else if (event.key === 'ArrowLeft') {
+                        nextIndex = (index - 1 + total) % total;
+                    } else if (event.key === 'Home') {
+                        nextIndex = 0;
+                    } else if (event.key === 'End') {
+                        nextIndex = total - 1;
+                    }
+                    if (nextIndex === null) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const nextButton = personalSubTabButtons[nextIndex];
+                    activatePersonalSubtab(nextButton.dataset.subtabTrigger, true);
+                });
+            });
+            const firstErrorPersonalSubtab = serverErrorKeys.length > 0 ? resolvePersonalSubtabByErrorKey(serverErrorKeys[0]) : 'basic';
+            activatePersonalSubtab(firstErrorPersonalSubtab, false, false);
+        }
 
         function setByName(name, value) {
             const els = document.querySelectorAll(`[name="${name}"]`);
@@ -1232,7 +1522,6 @@
         // Draft handling
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         const updateBtn = document.getElementById('updateBtn');
-        const formEl = document.getElementById('enrollmentForm');
         let statusHidden = formEl.querySelector('input[name="status"]');
         if (!statusHidden) {
             statusHidden = document.createElement('input');
