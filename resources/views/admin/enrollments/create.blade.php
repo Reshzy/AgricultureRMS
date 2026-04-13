@@ -11,6 +11,48 @@
                 @include('admin.enrollments.partials.form_tabs_nav')
 
                 <section id="tab-personal-panel" role="tabpanel" aria-labelledby="tab-personal-trigger" data-tab-panel="personal" class="space-y-6">
+                <div class="folder-subtab-shell rounded-xl p-3">
+                    <div class="flex flex-wrap gap-2" role="tablist" aria-label="Part 1 groups" data-subtab-list="personal">
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-basic-trigger"
+                            aria-controls="subtab-basic-panel"
+                            aria-selected="true"
+                            data-subtab-trigger="basic"
+                            class="folder-subtab is-active inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Basic Personal Details</span>
+                            <span data-subtab-error-badge="basic" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-household-trigger"
+                            aria-controls="subtab-household-panel"
+                            aria-selected="false"
+                            data-subtab-trigger="household"
+                            class="folder-subtab inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Household IDs</span>
+                            <span data-subtab-error-badge="household" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                        <button
+                            type="button"
+                            role="tab"
+                            id="subtab-emergency-trigger"
+                            aria-controls="subtab-emergency-panel"
+                            aria-selected="false"
+                            data-subtab-trigger="emergency"
+                            class="folder-subtab inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold md:text-sm"
+                        >
+                            <span>Emergency Contact</span>
+                            <span data-subtab-error-badge="emergency" class="hidden rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <section id="subtab-basic-panel" role="tabpanel" aria-labelledby="subtab-basic-trigger" data-subtab-panel="basic">
                 <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
                     <div>
                         <h4 class="text-base font-semibold text-emerald-900">Basic Personal Details</h4>
@@ -173,7 +215,9 @@
                 </div>
 
                 </div>
+                </section>
 
+                <section id="subtab-household-panel" role="tabpanel" aria-labelledby="subtab-household-trigger" data-subtab-panel="household" class="hidden">
                 <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
                     <div>
                         <h4 class="text-base font-semibold text-emerald-900">Household & IDs</h4>
@@ -220,7 +264,9 @@
                 </div>
 
                 </div>
+                </section>
 
+                <section id="subtab-emergency-panel" role="tabpanel" aria-labelledby="subtab-emergency-trigger" data-subtab-panel="emergency" class="hidden">
                 <div class="space-y-6 rounded-xl border border-emerald-100 bg-white p-5">
                     <div>
                         <h4 class="text-base font-semibold text-emerald-900">Emergency Contact</h4>
@@ -235,6 +281,7 @@
                     <div><x-label value="Emergency Contact Number" /><x-input name="emergency_contact_number" class="mt-1 w-full" /></div>
                 </div>
                 </div>
+                </section>
                 </section>
 
                 <section id="tab-farm-panel" role="tabpanel" aria-labelledby="tab-farm-trigger" data-tab-panel="farm" class="space-y-6 hidden">
@@ -329,6 +376,9 @@
         const tabList = formEl?.querySelector('[data-tab-list]');
         const tabButtons = tabList ? Array.from(tabList.querySelectorAll('[data-tab-trigger]')) : [];
         const tabPanels = formEl ? Array.from(formEl.querySelectorAll('[data-tab-panel]')) : [];
+        const personalSubTabList = formEl?.querySelector('[data-subtab-list="personal"]');
+        const personalSubTabButtons = personalSubTabList ? Array.from(personalSubTabList.querySelectorAll('[data-subtab-trigger]')) : [];
+        const personalSubTabPanels = formEl ? Array.from(formEl.querySelectorAll('[data-subtab-panel]')) : [];
         const serverErrorKeys = JSON.parse(document.getElementById('enrollmentErrorKeys')?.textContent ?? '[]');
         const farmErrorPrefixes = [
             'main_livelihood',
@@ -352,21 +402,69 @@
             }
             return 'personal';
         };
-        const activateTab = (tabName, shouldFocus = false) => {
+        const animateTabHighlight = (button) => {
+            if (!button) {
+                return;
+            }
+            button.classList.remove('tab-highlight-pop');
+            // Force reflow so animation replays for consecutive activations.
+            void button.offsetWidth;
+            button.classList.add('tab-highlight-pop');
+            window.setTimeout(() => {
+                button.classList.remove('tab-highlight-pop');
+            }, 320);
+        };
+        const activateTab = (tabName, shouldFocus = false, shouldAnimate = true) => {
             tabButtons.forEach((button) => {
                 const isActive = button.dataset.tabTrigger === tabName;
                 button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-                button.classList.toggle('border-emerald-200', isActive);
-                button.classList.toggle('text-emerald-900', isActive);
-                button.classList.toggle('bg-white', isActive);
-                button.classList.toggle('border-transparent', !isActive);
-                button.classList.toggle('text-gray-600', !isActive);
+                button.classList.toggle('is-active', isActive);
+                if (isActive && shouldAnimate) {
+                    animateTabHighlight(button);
+                }
                 if (shouldFocus && isActive) {
                     button.focus();
                 }
             });
             tabPanels.forEach((panel) => {
                 const isActive = panel.dataset.tabPanel === tabName;
+                panel.classList.toggle('hidden', !isActive);
+            });
+        };
+        const resolvePersonalSubtabByErrorKey = (key) => {
+            if (!key) {
+                return 'basic';
+            }
+            if (key.startsWith('emergency_contact_')) {
+                return 'emergency';
+            }
+            if (key.startsWith('household_') || key.startsWith('government_id_') || key.startsWith('indigenous_group_')) {
+                return 'household';
+            }
+            if ([
+                'is_pwd',
+                'is_four_ps_beneficiary',
+                'is_indigenous_group_member',
+                'has_government_id',
+            ].includes(key)) {
+                return 'household';
+            }
+            return 'basic';
+        };
+        const activatePersonalSubtab = (subtabName, shouldFocus = false, shouldAnimate = true) => {
+            personalSubTabButtons.forEach((button) => {
+                const isActive = button.dataset.subtabTrigger === subtabName;
+                button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                button.classList.toggle('is-active', isActive);
+                if (isActive && shouldAnimate) {
+                    animateTabHighlight(button);
+                }
+                if (shouldFocus && isActive) {
+                    button.focus();
+                }
+            });
+            personalSubTabPanels.forEach((panel) => {
+                const isActive = panel.dataset.subtabPanel === subtabName;
                 panel.classList.toggle('hidden', !isActive);
             });
         };
@@ -414,7 +512,56 @@
                 });
             });
             const firstErrorTab = serverErrorKeys.length > 0 ? resolveTabByErrorKey(serverErrorKeys[0]) : 'personal';
-            activateTab(firstErrorTab);
+            activateTab(firstErrorTab, false, false);
+        }
+        if (personalSubTabButtons.length && personalSubTabPanels.length) {
+            const personalSubtabErrorCounts = { basic: 0, household: 0, emergency: 0 };
+            serverErrorKeys.forEach((key) => {
+                if (resolveTabByErrorKey(key) !== 'personal') {
+                    return;
+                }
+                const subtabName = resolvePersonalSubtabByErrorKey(key);
+                personalSubtabErrorCounts[subtabName] = (personalSubtabErrorCounts[subtabName] ?? 0) + 1;
+            });
+            Object.entries(personalSubtabErrorCounts).forEach(([subtabName, count]) => {
+                const badge = personalSubTabList.querySelector(`[data-subtab-error-badge="${subtabName}"]`);
+                if (!badge) {
+                    return;
+                }
+                if (count > 0) {
+                    badge.textContent = String(count);
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.textContent = '';
+                    badge.classList.add('hidden');
+                }
+            });
+            personalSubTabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    activatePersonalSubtab(button.dataset.subtabTrigger);
+                });
+                button.addEventListener('keydown', (event) => {
+                    const total = personalSubTabButtons.length;
+                    let nextIndex = null;
+                    if (event.key === 'ArrowRight') {
+                        nextIndex = (index + 1) % total;
+                    } else if (event.key === 'ArrowLeft') {
+                        nextIndex = (index - 1 + total) % total;
+                    } else if (event.key === 'Home') {
+                        nextIndex = 0;
+                    } else if (event.key === 'End') {
+                        nextIndex = total - 1;
+                    }
+                    if (nextIndex === null) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const nextButton = personalSubTabButtons[nextIndex];
+                    activatePersonalSubtab(nextButton.dataset.subtabTrigger, true);
+                });
+            });
+            const firstErrorPersonalSubtab = serverErrorKeys.length > 0 ? resolvePersonalSubtabByErrorKey(serverErrorKeys[0]) : 'basic';
+            activatePersonalSubtab(firstErrorPersonalSubtab, false, false);
         }
 
         // 2x2 image preview and camera capture
