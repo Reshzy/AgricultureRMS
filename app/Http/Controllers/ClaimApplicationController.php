@@ -70,6 +70,7 @@ class ClaimApplicationController extends Controller
     public function store(StoreClaimRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+
         $claim = DB::transaction(function () use ($validated, $request): Claim {
             $claim = Claim::create([
                 'enrollment_id' => (int) $validated['enrollment_id'],
