@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ClaimController as AdminClaimController;
+use App\Http\Controllers\ClaimApplicationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
@@ -27,6 +29,16 @@ Route::get('/terms', [PolicyController::class, 'terms'])->name('terms');
 // Public News
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
+
+// Claims Application
+Route::get('/claims/apply', [ClaimApplicationController::class, 'create'])->name('claims.apply');
+Route::get('/claims/rsbsa-search', [ClaimApplicationController::class, 'searchRsbsa'])
+    ->middleware('throttle:60,1')
+    ->name('claims.search');
+Route::post('/claims', [ClaimApplicationController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('claims.store');
+Route::get('/claims/submitted/{claim}', [ClaimApplicationController::class, 'submitted'])->name('claims.submitted');
 
 // Pending approval page - accessible to authenticated users
 Route::middleware([
@@ -117,6 +129,11 @@ Route::middleware([
     Route::get('/admin/enrollments/{enrollment}/edit', [EnrollmentController::class, 'edit'])->name('admin.enrollments.edit');
     Route::get('/admin/enrollments/{enrollment}/word', [EnrollmentController::class, 'exportWord'])->name('admin.enrollments.word');
     Route::put('/admin/enrollments/{enrollment}', [EnrollmentController::class, 'update'])->name('admin.enrollments.update');
+
+    // Claims
+    Route::get('/admin/claims', [AdminClaimController::class, 'index'])->name('admin.claims.index');
+    Route::get('/admin/claims/{claim}', [AdminClaimController::class, 'show'])->name('admin.claims.show');
+    Route::patch('/admin/claims/{claim}', [AdminClaimController::class, 'update'])->name('admin.claims.update');
 
     // User Management
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');

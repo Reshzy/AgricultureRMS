@@ -324,6 +324,10 @@
                 <i class="fa-solid fa-users"></i>
                 <span class="nav-label">Enrollments</span>
             </a>
+            <a href="{{ route('admin.claims.index') }}" class="nav-text flex items-center gap-3 px-3 py-2 rounded-lg transition {{ request()->routeIs('admin.claims.*') ? 'bg-white/10' : 'hover:bg-white/10' }}">
+                <i class="fa-solid fa-file-signature"></i>
+                <span class="nav-label">Claims</span>
+            </a>
             <a href="{{ route('admin.news.index') }}" class="nav-text flex items-center gap-3 px-3 py-2 rounded-lg transition {{ request()->routeIs('admin.news.*') ? 'bg-white/10' : 'hover:bg-white/10' }}">
                 <i class="fa-solid fa-newspaper"></i>
                 <span class="nav-label">News</span>
