@@ -44,6 +44,10 @@
                     <dd>{{ $claimLabels[$claim->claim_type] ?? ucfirst(str_replace('_', ' ', $claim->claim_type)) }}</dd>
                 </div>
                 <div>
+                    <dt class="font-medium text-gray-900">Contact Email</dt>
+                    <dd>{{ $claim->contact_email ?? 'N/A' }}</dd>
+                </div>
+                <div>
                     <dt class="font-medium text-gray-900">Current Status</dt>
                     <dd>{{ ucfirst(str_replace('_', ' ', $claim->status)) }}</dd>
                 </div>

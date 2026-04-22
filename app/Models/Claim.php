@@ -30,6 +30,8 @@ class Claim extends Model
     protected $fillable = [
         'enrollment_id',
         'claim_type',
+        'contact_email',
+        'contact_email_verified_at',
         'status',
         'review_notes',
         'reviewed_by_user_id',
@@ -39,6 +41,7 @@ class Claim extends Model
     protected function casts(): array
     {
         return [
+            'contact_email_verified_at' => 'datetime',
             'reviewed_at' => 'datetime',
         ];
     }
@@ -51,6 +54,24 @@ class Claim extends Model
             self::TYPE_DESTROYED_CROPS,
             self::TYPE_LIVESTOCK,
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function typeLabels(): array
+    {
+        return [
+            self::TYPE_DEATH => 'Death Claim',
+            self::TYPE_ACCIDENT => 'Accident Claim',
+            self::TYPE_DESTROYED_CROPS => 'Destroyed Crops Claim',
+            self::TYPE_LIVESTOCK => 'Livestock Claim',
+        ];
+    }
+
+    public static function labelForType(string $type): string
+    {
+        return self::typeLabels()[$type] ?? ucfirst(str_replace('_', ' ', $type));
     }
 
     public static function statuses(): array

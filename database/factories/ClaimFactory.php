@@ -21,6 +21,8 @@ class ClaimFactory extends Factory
         return [
             'enrollment_id' => Enrollment::factory(),
             'claim_type' => fake()->randomElement(Claim::claimTypes()),
+            'contact_email' => fake()->safeEmail(),
+            'contact_email_verified_at' => null,
             'status' => Claim::STATUS_SUBMITTED,
             'review_notes' => null,
             'reviewed_by_user_id' => null,

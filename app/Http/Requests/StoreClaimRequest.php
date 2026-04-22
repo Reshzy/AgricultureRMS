@@ -28,6 +28,7 @@ class StoreClaimRequest extends FormRequest
         return [
             'enrollment_id' => ['required', 'integer', 'exists:enrollments,id'],
             'claim_type' => ['required', 'string', Rule::in(Claim::claimTypes())],
+            'contact_email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
             'documents' => ['required', 'array'],
             'documents.*' => ['nullable', 'array', 'max:5'],
             'documents.*.*' => [

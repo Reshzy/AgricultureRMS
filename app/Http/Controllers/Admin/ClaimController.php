@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateClaimStatusRequest;
 use App\Models\Claim;
+use App\Notifications\ClaimStatusNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class ClaimController extends Controller
@@ -47,12 +49,7 @@ class ClaimController extends Controller
             'perPage' => $perPage,
             'claimTypes' => Claim::claimTypes(),
             'statuses' => Claim::statuses(),
-            'claimLabels' => [
-                Claim::TYPE_DEATH => 'Death Claim',
-                Claim::TYPE_ACCIDENT => 'Accident Claim',
-                Claim::TYPE_DESTROYED_CROPS => 'Destroyed Crops Claim',
-                Claim::TYPE_LIVESTOCK => 'Livestock Claim',
-            ],
+            'claimLabels' => Claim::typeLabels(),
         ]);
     }
 
@@ -62,12 +59,7 @@ class ClaimController extends Controller
 
         return view('admin.claims.show', [
             'claim' => $claim,
-            'claimLabels' => [
-                Claim::TYPE_DEATH => 'Death Claim',
-                Claim::TYPE_ACCIDENT => 'Accident Claim',
-                Claim::TYPE_DESTROYED_CROPS => 'Destroyed Crops Claim',
-                Claim::TYPE_LIVESTOCK => 'Livestock Claim',
-            ],
+            'claimLabels' => Claim::typeLabels(),
             'statuses' => Claim::statuses(),
         ]);
     }
@@ -84,6 +76,11 @@ class ClaimController extends Controller
             'reviewed_by_user_id' => $request->user()?->id,
             'reviewed_at' => $isFinalStatus ? now() : null,
         ]);
+
+        if (! empty($claim->contact_email)) {
+            Notification::route('mail', $claim->contact_email)
+                ->notify(new ClaimStatusNotification($claim->fresh('enrollment')));
+        }
 
         return redirect()
             ->route('admin.claims.show', $claim)

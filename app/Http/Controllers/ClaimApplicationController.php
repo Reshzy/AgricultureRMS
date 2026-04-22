@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClaimRequest;
 use App\Models\Claim;
 use App\Models\Enrollment;
+use App\Notifications\ClaimStatusNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class ClaimApplicationController extends Controller
@@ -17,12 +19,7 @@ class ClaimApplicationController extends Controller
     {
         return view('claims.apply', [
             'claimRequirements' => Claim::documentRequirements(),
-            'claimLabels' => [
-                Claim::TYPE_DEATH => 'Death Claim',
-                Claim::TYPE_ACCIDENT => 'Accident Claim',
-                Claim::TYPE_DESTROYED_CROPS => 'Destroyed Crops Claim',
-                Claim::TYPE_LIVESTOCK => 'Livestock Claim',
-            ],
+            'claimLabels' => Claim::typeLabels(),
         ]);
     }
 
@@ -77,6 +74,7 @@ class ClaimApplicationController extends Controller
             $claim = Claim::create([
                 'enrollment_id' => (int) $validated['enrollment_id'],
                 'claim_type' => $validated['claim_type'],
+                'contact_email' => $validated['contact_email'],
                 'status' => Claim::STATUS_SUBMITTED,
             ]);
 
@@ -97,6 +95,9 @@ class ClaimApplicationController extends Controller
             return $claim;
         });
 
+        Notification::route('mail', $claim->contact_email)
+            ->notify(new ClaimStatusNotification($claim->load('enrollment')));
+
         return redirect()
             ->route('claims.submitted', $claim)
             ->with('status', 'Claim submitted successfully.');
@@ -108,12 +109,7 @@ class ClaimApplicationController extends Controller
 
         return view('claims.submitted', [
             'claim' => $claim,
-            'claimLabels' => [
-                Claim::TYPE_DEATH => 'Death Claim',
-                Claim::TYPE_ACCIDENT => 'Accident Claim',
-                Claim::TYPE_DESTROYED_CROPS => 'Destroyed Crops Claim',
-                Claim::TYPE_LIVESTOCK => 'Livestock Claim',
-            ],
+            'claimLabels' => Claim::typeLabels(),
         ]);
     }
 }

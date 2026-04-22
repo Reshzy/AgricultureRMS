@@ -24,19 +24,20 @@
             </p>
         </div>
 
-        <div class="mb-8 grid gap-3 sm:grid-cols-4" id="stepIndicators">
+        <div class="mb-8 grid gap-3 sm:grid-cols-5" id="stepIndicators">
             @foreach ([
                 1 => 'Find RSBSA',
-                2 => 'Claim Type',
-                3 => 'Documents',
-                4 => 'Review',
+                2 => 'Contact Email',
+                3 => 'Claim Type',
+                4 => 'Documents',
+                5 => 'Review',
             ] as $step => $label)
                 <button
                     type="button"
                     data-step-target="{{ $step }}"
                     class="step-indicator w-full rounded-lg border px-3 py-2 text-left text-sm transition {{ $step === 1 ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-white text-gray-500' }}"
                 >
-                    <span class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-current/10 text-xs font-semibold">{{ $step }}</span>
+                    <span data-step-badge class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-current/10 text-xs font-semibold">{{ $step }}</span>
                     <span>{{ $label }}</span>
                 </button>
             @endforeach
@@ -57,6 +58,7 @@
             @csrf
             <input type="hidden" name="enrollment_id" id="enrollmentIdInput" value="{{ old('enrollment_id') }}">
             <input type="hidden" name="claim_type" id="claimTypeInput" value="{{ old('claim_type') }}">
+            <input type="hidden" name="contact_email" id="contactEmailInput" value="{{ old('contact_email') }}">
 
             <section data-step-panel="1" class="step-panel">
                 <h2 class="text-lg font-semibold text-emerald-900">Step 1: Search and select your RSBSA record</h2>
@@ -85,7 +87,24 @@
             </section>
 
             <section data-step-panel="2" class="step-panel hidden">
-                <h2 class="text-lg font-semibold text-emerald-900">Step 2: Choose claim type</h2>
+                <h2 class="text-lg font-semibold text-emerald-900">Step 2: Provide contact email</h2>
+                <p class="mt-1 text-sm text-gray-600">We will send updates to this email when your claim status changes.</p>
+
+                <div class="mt-4 max-w-xl">
+                    <label for="contactEmailField" class="mb-1 block text-sm font-medium text-gray-700">Contact Email <span class="text-red-500">*</span></label>
+                    <input
+                        type="email"
+                        id="contactEmailField"
+                        value="{{ old('contact_email') }}"
+                        placeholder="you@example.com"
+                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    >
+                    <p class="mt-1 text-xs text-gray-500">Required for status notifications: submitted, under review, approved, rejected.</p>
+                </div>
+            </section>
+
+            <section data-step-panel="3" class="step-panel hidden">
+                <h2 class="text-lg font-semibold text-emerald-900">Step 3: Choose claim type</h2>
                 <p class="mt-1 text-sm text-gray-600">Only one claim type can be submitted per application.</p>
 
                 <div class="mt-4 grid gap-3 sm:grid-cols-2">
@@ -105,20 +124,21 @@
                 </div>
             </section>
 
-            <section data-step-panel="3" class="step-panel hidden">
-                <h2 class="text-lg font-semibold text-emerald-900">Step 3: Upload required documents</h2>
+            <section data-step-panel="4" class="step-panel hidden">
+                <h2 class="text-lg font-semibold text-emerald-900">Step 4: Upload required documents</h2>
                 <p class="mt-1 text-sm text-gray-600">Upload one or more files (PDF or image) for each required document.</p>
 
                 <div id="documentFields" class="mt-4 space-y-4"></div>
             </section>
 
-            <section data-step-panel="4" class="step-panel hidden">
-                <h2 class="text-lg font-semibold text-emerald-900">Step 4: Review and submit</h2>
+            <section data-step-panel="5" class="step-panel hidden">
+                <h2 class="text-lg font-semibold text-emerald-900">Step 5: Review and submit</h2>
                 <p class="mt-1 text-sm text-gray-600">Confirm all information before submitting your claim.</p>
 
                 <div class="mt-4 space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
                     <p><span class="font-semibold text-gray-900">Selected RSBSA:</span> <span id="reviewRsbsa">—</span></p>
                     <p><span class="font-semibold text-gray-900">Claim type:</span> <span id="reviewClaimType">—</span></p>
+                    <p><span class="font-semibold text-gray-900">Contact email:</span> <span id="reviewContactEmail">—</span></p>
                     <div>
                         <p class="font-semibold text-gray-900">Required documents:</p>
                         <ul id="reviewDocuments" class="mt-1 list-disc space-y-1 pl-5"></ul>
@@ -152,6 +172,7 @@
             const searchRoute = form.dataset.searchUrl || '';
             const enrollmentIdInput = document.getElementById('enrollmentIdInput');
             const claimTypeInput = document.getElementById('claimTypeInput');
+            const contactEmailInput = document.getElementById('contactEmailInput');
             const stepPanels = document.querySelectorAll('[data-step-panel]');
             const stepIndicators = document.querySelectorAll('.step-indicator');
             const prevStepButton = document.getElementById('prevStepButton');
@@ -165,12 +186,15 @@
             const documentFields = document.getElementById('documentFields');
             const reviewRsbsa = document.getElementById('reviewRsbsa');
             const reviewClaimType = document.getElementById('reviewClaimType');
+            const reviewContactEmail = document.getElementById('reviewContactEmail');
             const reviewDocuments = document.getElementById('reviewDocuments');
+            const contactEmailField = document.getElementById('contactEmailField');
             const rsbsaDigitGroups = [2, 2, 2, 3, 4];
             const maxRsbsaDigits = 13;
 
             let currentStep = 1;
             let selectedEnrollment = null;
+            let highestVisitedStep = 1;
 
             function setMessage(message, isError = false) {
                 rsbsaSearchMessage.textContent = message;
@@ -203,16 +227,31 @@
                 stepIndicators.forEach((indicator) => {
                     const step = Number(indicator.dataset.stepTarget);
                     const isActive = step === currentStep;
+                    const isVisited = step < currentStep || step <= highestVisitedStep - 1;
+                    const badge = indicator.querySelector('[data-step-badge]');
+
                     indicator.className = `step-indicator w-full rounded-lg border px-3 py-2 text-left text-sm transition ${
                         isActive
                             ? 'border-emerald-600 bg-emerald-50 text-emerald-700'
-                            : 'border-gray-200 bg-white text-gray-500'
+                            : isVisited
+                                ? 'border-sky-300 bg-sky-50 text-sky-700'
+                                : 'border-gray-200 bg-white text-gray-500'
                     }`;
+
+                    if (badge) {
+                        badge.className = `mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
+                            isActive
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : isVisited
+                                    ? 'bg-sky-100 text-sky-700'
+                                    : 'bg-current/10'
+                        }`;
+                    }
                 });
 
                 prevStepButton.disabled = currentStep === 1;
-                nextStepButton.classList.toggle('hidden', currentStep === 4);
-                submitButton.classList.toggle('hidden', currentStep !== 4);
+                nextStepButton.classList.toggle('hidden', currentStep === 5);
+                submitButton.classList.toggle('hidden', currentStep !== 5);
             }
 
             function validateCurrentStep() {
@@ -221,12 +260,23 @@
                     return false;
                 }
 
-                if (currentStep === 2 && !claimTypeInput.value) {
+                if (currentStep === 2) {
+                    const email = contactEmailField.value.trim();
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (email === '' || !emailPattern.test(email)) {
+                        alert('Please enter a valid contact email.');
+                        return false;
+                    }
+
+                    contactEmailInput.value = email;
+                }
+
+                if (currentStep === 3 && !claimTypeInput.value) {
                     alert('Please select one claim type.');
                     return false;
                 }
 
-                if (currentStep === 3) {
+                if (currentStep === 4) {
                     const selectedClaimType = claimTypeInput.value;
                     const requirements = claimRequirements[selectedClaimType] || {};
                     for (const key of Object.keys(requirements)) {
@@ -266,6 +316,7 @@
                 reviewClaimType.textContent = claimTypeInput.value
                     ? (claimLabels[claimTypeInput.value] || claimTypeInput.value)
                     : '—';
+                reviewContactEmail.textContent = contactEmailInput.value || '—';
 
                 reviewDocuments.innerHTML = '';
                 const requirements = claimRequirements[claimTypeInput.value] || {};
@@ -374,11 +425,12 @@
                     return;
                 }
 
-                if (currentStep < 4) {
+                if (currentStep < 5) {
                     currentStep += 1;
                 }
+                highestVisitedStep = Math.max(highestVisitedStep, currentStep);
 
-                if (currentStep === 4) {
+                if (currentStep === 5) {
                     updateReview();
                 }
 
@@ -404,6 +456,15 @@
                 card?.classList.add('border-emerald-500', 'bg-emerald-50');
                 renderRequirementInputs();
             }
+
+            if (contactEmailInput.value) {
+                contactEmailField.value = contactEmailInput.value;
+            }
+
+            contactEmailField.addEventListener('input', () => {
+                contactEmailInput.value = contactEmailField.value.trim();
+                updateReview();
+            });
 
             updateReview();
             updateStepUI();
