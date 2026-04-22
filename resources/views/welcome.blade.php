@@ -505,7 +505,7 @@
                             <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </a>
                         @else
-                        <a href="{{ route('register') }}" class="btn-primary px-8 py-4 text-white font-semibold rounded-2xl text-lg inline-flex items-center justify-center group">
+                        <a href="{{ route('claims.apply') }}" class="btn-primary px-8 py-4 text-white font-semibold rounded-2xl text-lg inline-flex items-center justify-center group">
                             <span>Apply Claims</span>
                             <i class="fas fa-file-signature ml-2 transition-transform group-hover:translate-x-1"></i>
                         </a>

@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -31,12 +31,40 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'is_admin' => false,
+            'is_main_admin' => false,
+            'admin_request_status' => User::ADMIN_REQUEST_PENDING,
+            'approved_at' => null,
+            'is_active' => true,
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
         ];
+    }
+
+    public function approvedAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+            'admin_request_status' => User::ADMIN_REQUEST_APPROVED,
+            'approved_at' => now(),
+        ]);
+    }
+
+    public function mainAdmin(): static
+    {
+        return $this->approvedAdmin()->state(fn (array $attributes) => [
+            'is_main_admin' => true,
+        ]);
+    }
+
+    public function disabled(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
+        ]);
     }
 
     /**

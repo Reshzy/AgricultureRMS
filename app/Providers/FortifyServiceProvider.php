@@ -6,8 +6,10 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -42,15 +44,31 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.register');
         });
 
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = User::where('email', $request->email)->first();
+
+            if (! $user || ! ($user->is_active ?? true)) {
+                return null;
+            }
+
+            if (Hash::check((string) $request->password, $user->password)) {
+                return $user;
+            }
+
+            return null;
+        });
+
         // Custom redirect after registration based on admin status
         $this->app->singleton(RegisterResponse::class, function ($app) {
-            return new class implements RegisterResponse {
+            return new class implements RegisterResponse
+            {
                 public function toResponse($request)
                 {
                     $user = $request->user();
                     if ($user && ($user->is_admin ?? false)) {
                         return redirect()->route('dashboard');
                     }
+
                     return redirect()->route('pending-approval');
                 }
             };
@@ -58,13 +76,15 @@ class FortifyServiceProvider extends ServiceProvider
 
         // Custom redirect after login based on admin status
         $this->app->singleton(LoginResponse::class, function ($app) {
-            return new class implements LoginResponse {
+            return new class implements LoginResponse
+            {
                 public function toResponse($request)
                 {
                     $user = $request->user();
                     if ($user && ($user->is_admin ?? false)) {
                         return redirect()->route('dashboard');
                     }
+
                     return redirect()->route('pending-approval');
                 }
             };

@@ -30,6 +30,10 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'is_admin' => false,
+            'is_main_admin' => false,
+            'admin_request_status' => User::ADMIN_REQUEST_PENDING,
+            'is_active' => true,
         ]);
     }
 }

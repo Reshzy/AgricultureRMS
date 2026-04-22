@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -37,35 +36,115 @@ class UserController extends Controller
             $query->where('is_admin', false);
         }
 
+        $requestStatusFilter = $request->input('request_status');
+        if (in_array($requestStatusFilter, [User::ADMIN_REQUEST_PENDING, User::ADMIN_REQUEST_APPROVED], true)) {
+            $query->where('admin_request_status', $requestStatusFilter);
+        }
+
         $users = $query->orderByDesc('created_at')->paginate($perPage)->appends($request->except('page'));
 
         if ($request->ajax()) {
             return view('admin.users.partials.table', compact('users'));
         }
 
-        return view('admin.users.index', compact('users', 'search', 'adminFilter', 'perPage'));
+        return view('admin.users.index', compact('users', 'search', 'adminFilter', 'requestStatusFilter', 'perPage'));
     }
 
     /**
-     * Update the specified user (toggle admin status).
+     * Approve a pending registration request.
      */
-    public function update(Request $request, User $user)
+    public function approve(Request $request, User $user)
     {
-        $request->validate([
-            'is_admin' => ['required', 'boolean'],
-        ]);
+        if ($user->is_main_admin) {
+            return back()->with('error', 'Main admin accounts cannot be modified from this screen.');
+        }
 
-        // Prevent users from removing their own admin status
-        if ($user->id === $request->user()->id && !$request->boolean('is_admin')) {
-            return back()->with('error', 'You cannot remove your own admin access.');
+        if ($user->admin_request_status === User::ADMIN_REQUEST_APPROVED && $user->is_admin) {
+            return back()->with('status', "{$user->name} is already approved.");
         }
 
         $user->update([
-            'is_admin' => $request->boolean('is_admin'),
+            'is_admin' => true,
+            'admin_request_status' => User::ADMIN_REQUEST_APPROVED,
+            'approved_at' => now(),
+            'is_active' => true,
         ]);
 
-        $status = $request->boolean('is_admin') ? 'granted' : 'revoked';
-        return back()->with('status', "Admin access {$status} for {$user->name}.");
+        return back()->with('status', "Approved {$user->name}'s admin registration request.");
+    }
+
+    /**
+     * Reject a pending registration request and delete the account.
+     */
+    public function reject(Request $request, User $user)
+    {
+        if ($user->is_main_admin) {
+            return back()->with('error', 'Main admin accounts cannot be modified from this screen.');
+        }
+
+        if ($user->id === $request->user()->id) {
+            return back()->with('error', 'You cannot reject your own account.');
+        }
+
+        if ($user->admin_request_status !== User::ADMIN_REQUEST_PENDING) {
+            return back()->with('error', 'Only pending requests can be rejected.');
+        }
+
+        $name = $user->name;
+        $user->delete();
+
+        return back()->with('status', "Rejected and removed {$name}'s registration request.");
+    }
+
+    /**
+     * Disable an approved admin account.
+     */
+    public function disable(Request $request, User $user)
+    {
+        if ($user->is_main_admin) {
+            return back()->with('error', 'Main admin accounts cannot be disabled.');
+        }
+
+        if ($user->id === $request->user()->id) {
+            return back()->with('error', 'You cannot disable your own account.');
+        }
+
+        if ($user->admin_request_status !== User::ADMIN_REQUEST_APPROVED || ! $user->is_admin) {
+            return back()->with('error', 'Only approved admins can be disabled.');
+        }
+
+        if (! $user->is_active) {
+            return back()->with('status', "{$user->name} is already disabled.");
+        }
+
+        $user->update([
+            'is_active' => false,
+        ]);
+
+        return back()->with('status', "Disabled access for {$user->name}.");
+    }
+
+    /**
+     * Re-enable a disabled approved admin account.
+     */
+    public function enable(Request $request, User $user)
+    {
+        if ($user->is_main_admin) {
+            return back()->with('error', 'Main admin accounts are always enabled.');
+        }
+
+        if ($user->admin_request_status !== User::ADMIN_REQUEST_APPROVED || ! $user->is_admin) {
+            return back()->with('error', 'Only approved admins can be enabled.');
+        }
+
+        if ($user->is_active) {
+            return back()->with('status', "{$user->name} is already active.");
+        }
+
+        $user->update([
+            'is_active' => true,
+        ]);
+
+        return back()->with('status', "Re-enabled access for {$user->name}.");
     }
 }
-
