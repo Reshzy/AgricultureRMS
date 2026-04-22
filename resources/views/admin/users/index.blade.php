@@ -29,12 +29,17 @@
                 </select>
             </div>
         </div>
-        <div class="mt-3 grid grid-cols-1 md:grid-cols-4 gap-2">
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-5 gap-2">
             <input id="filterSearch" type="text" value="{{ $search ?? '' }}" placeholder="Search name or email..." class="px-3 py-2 rounded-lg border text-sm md:col-span-2" />
             <select id="filterAdmin" class="px-3 py-2 rounded-lg border text-sm">
                 <option value="">All users</option>
                 <option value="yes" {{ ($adminFilter ?? '')==='yes' ? 'selected':'' }}>Admins only</option>
                 <option value="no" {{ ($adminFilter ?? '')==='no' ? 'selected':'' }}>Non-admins only</option>
+            </select>
+            <select id="filterRequestStatus" class="px-3 py-2 rounded-lg border text-sm">
+                <option value="">All request statuses</option>
+                <option value="pending" {{ ($requestStatusFilter ?? '')==='pending' ? 'selected':'' }}>Pending</option>
+                <option value="approved" {{ ($requestStatusFilter ?? '')==='approved' ? 'selected':'' }}>Approved</option>
             </select>
             <button id="resetFilters" class="px-3 py-2 rounded-lg border text-sm">Reset</button>
         </div>
@@ -51,6 +56,7 @@
         const wrap = document.getElementById('tableWrap');
         const searchI = document.getElementById('filterSearch');
         const adminI = document.getElementById('filterAdmin');
+        const requestStatusI = document.getElementById('filterRequestStatus');
         const perPageI = document.getElementById('perPage');
         const resetBtn = document.getElementById('resetFilters');
 
@@ -66,6 +72,7 @@
             const p = new URLSearchParams();
             if (searchI.value.trim()) p.set('q', searchI.value.trim());
             if (adminI.value) p.set('admin', adminI.value);
+            if (requestStatusI.value) p.set('request_status', requestStatusI.value);
             p.set('per_page', perPageI.value || '15');
             if (page) p.set('page', page);
             return p.toString();
@@ -86,10 +93,12 @@
 
         searchI.addEventListener('input', refresh);
         adminI.addEventListener('change', refresh);
+        requestStatusI.addEventListener('change', refresh);
         perPageI.addEventListener('change', () => loadTableWithParams(buildParams(1)));
         resetBtn.addEventListener('click', () => {
             searchI.value = '';
             adminI.value = '';
+            requestStatusI.value = '';
             loadTableWithParams(buildParams(1));
         });
 

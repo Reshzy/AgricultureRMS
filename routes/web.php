@@ -72,7 +72,7 @@ Route::middleware([
             // Get insurance statistics
             $withInsuranceCount = Enrollment::where('has_insurance_registered', true)->count();
             $withoutInsuranceCount = Enrollment::where('has_insurance_registered', false)->orWhereNull('has_insurance_registered')->count();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Fallback values if database queries fail
             $totalEnrollments = 0;
             $pendingDrafts = 0;
@@ -120,5 +120,10 @@ Route::middleware([
 
     // User Management
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::middleware('main_admin')->group(function () {
+        Route::patch('/admin/users/{user}/approve', [UserController::class, 'approve'])->name('admin.users.approve');
+        Route::delete('/admin/users/{user}/reject', [UserController::class, 'reject'])->name('admin.users.reject');
+        Route::patch('/admin/users/{user}/disable', [UserController::class, 'disable'])->name('admin.users.disable');
+        Route::patch('/admin/users/{user}/enable', [UserController::class, 'enable'])->name('admin.users.enable');
+    });
 });

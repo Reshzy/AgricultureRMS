@@ -12,21 +12,33 @@ class AdminMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user is authenticated
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login')->with('error', 'Please login to access the admin dashboard.');
         }
 
         $user = Auth::user();
-        if (!($user->is_admin ?? false)) {
+        if (! ($user->is_active ?? true)) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            if ($request->expectsJson()) {
+                abort(403, 'Unauthorized. Account is disabled.');
+            }
+
+            return redirect()->route('login')->with('error', 'Your account has been disabled. Please contact the main admin.');
+        }
+
+        if (! ($user->is_admin ?? false)) {
             // For web requests, redirect to pending approval page
             if ($request->expectsJson()) {
                 abort(403, 'Unauthorized. Admin access required.');
             }
+
             return redirect()->route('pending-approval')->with('error', 'Admin access required.');
         }
 
