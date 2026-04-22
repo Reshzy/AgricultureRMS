@@ -12,14 +12,14 @@
             </div>
             <h2 class="text-2xl font-semibold text-gray-900 mb-2">Account Pending Approval</h2>
             <p class="text-gray-600">
-                Your account registration was successful, but it requires admin approval before you can access the dashboard.
+                Your registration request was submitted successfully, but the main admin must approve it before you can access the dashboard.
             </p>
         </div>
 
         <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
             <p class="text-sm text-amber-800">
                 <strong>What happens next?</strong><br>
-                An administrator will review your account and grant you access. You will be able to access the dashboard once your account has been approved.
+                The main admin will review your request. If approved, your account gains admin access. Rejected requests are permanently removed.
             </p>
         </div>
 

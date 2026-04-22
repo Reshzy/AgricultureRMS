@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,10 +15,15 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    public const ADMIN_REQUEST_PENDING = 'pending';
+
+    public const ADMIN_REQUEST_APPROVED = 'approved';
+
     use HasApiTokens;
 
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
@@ -31,6 +38,10 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'is_main_admin',
+        'admin_request_status',
+        'approved_at',
+        'is_active',
     ];
 
     /**
@@ -65,11 +76,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_main_admin' => 'boolean',
+            'approved_at' => 'datetime',
+            'is_active' => 'boolean',
         ];
     }
 
     public function enrollment(): HasOne
     {
         return $this->hasOne(Enrollment::class);
+    }
+
+    public function reviewedClaims(): HasMany
+    {
+        return $this->hasMany(Claim::class, 'reviewed_by_user_id');
     }
 }
