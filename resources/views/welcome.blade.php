@@ -640,7 +640,7 @@
                                     <div class="mt-2 flex flex-wrap gap-2">
                                         @foreach ($item->categories as $category)
                                             <span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                                {{ ucfirst($category) }}
+                                                {{ Str::headline($category) }}
                                             </span>
                                         @endforeach
                                     </div>
