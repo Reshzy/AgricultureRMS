@@ -52,7 +52,6 @@
             data-claim-labels='@json($claimLabels)'
             data-old-enrollment-id="{{ old('enrollment_id') }}"
             data-old-claim-type="{{ old('claim_type') }}"
-            data-search-url="{{ route('claims.search') }}"
             class="space-y-6 rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm"
         >
             @csrf
@@ -64,26 +63,10 @@
                 <h2 class="text-lg font-semibold text-emerald-900">Step 1: Search and select your RSBSA record</h2>
                 <p class="mt-1 text-sm text-gray-600">You must select an existing RSBSA record to continue.</p>
 
-                <div class="mt-4 flex flex-col gap-3 sm:flex-row">
-                    <input
-                        type="text"
-                        id="rsbsaSearchInput"
-                        value="{{ old('rsbsa_search') }}"
-                        placeholder="Format: xx-xx-xx-xxx-xxxx"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        maxlength="17"
-                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                    >
-                    <button type="button" id="rsbsaSearchButton" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
-                        Search
-                    </button>
-                </div>
-
-                <p id="rsbsaSearchMessage" class="mt-3 text-sm text-gray-600"></p>
-
-                <div id="rsbsaResults" class="mt-4 space-y-2"></div>
-                <p id="selectedEnrollmentSummary" class="mt-4 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm text-emerald-800 hidden"></p>
+                <livewire:claim-rsbsa-search
+                    :initial-query="old('rsbsa_search', '')"
+                    :selected-enrollment-id="old('enrollment_id') ? (int) old('enrollment_id') : null"
+                />
             </section>
 
             <section data-step-panel="2" class="step-panel hidden">
@@ -169,7 +152,6 @@
             const claimLabels = JSON.parse(form.dataset.claimLabels || '{}');
             const oldEnrollmentId = form.dataset.oldEnrollmentId || '';
             const oldClaimType = form.dataset.oldClaimType || '';
-            const searchRoute = form.dataset.searchUrl || '';
             const enrollmentIdInput = document.getElementById('enrollmentIdInput');
             const claimTypeInput = document.getElementById('claimTypeInput');
             const contactEmailInput = document.getElementById('contactEmailInput');
@@ -178,46 +160,16 @@
             const prevStepButton = document.getElementById('prevStepButton');
             const nextStepButton = document.getElementById('nextStepButton');
             const submitButton = document.getElementById('submitButton');
-            const rsbsaSearchInput = document.getElementById('rsbsaSearchInput');
-            const rsbsaSearchButton = document.getElementById('rsbsaSearchButton');
-            const rsbsaSearchMessage = document.getElementById('rsbsaSearchMessage');
-            const rsbsaResults = document.getElementById('rsbsaResults');
-            const selectedEnrollmentSummary = document.getElementById('selectedEnrollmentSummary');
             const documentFields = document.getElementById('documentFields');
             const reviewRsbsa = document.getElementById('reviewRsbsa');
             const reviewClaimType = document.getElementById('reviewClaimType');
             const reviewContactEmail = document.getElementById('reviewContactEmail');
             const reviewDocuments = document.getElementById('reviewDocuments');
             const contactEmailField = document.getElementById('contactEmailField');
-            const rsbsaDigitGroups = [2, 2, 2, 3, 4];
-            const maxRsbsaDigits = 13;
 
             let currentStep = 1;
             let selectedEnrollment = null;
             let highestVisitedStep = 1;
-
-            function setMessage(message, isError = false) {
-                rsbsaSearchMessage.textContent = message;
-                rsbsaSearchMessage.className = `mt-3 text-sm ${isError ? 'text-red-600' : 'text-gray-600'}`;
-            }
-
-            function formatRsbsaInput(value) {
-                const digits = value.replace(/\D/g, '').slice(0, maxRsbsaDigits);
-                const chunks = [];
-                let cursor = 0;
-
-                rsbsaDigitGroups.forEach((groupSize) => {
-                    const chunk = digits.slice(cursor, cursor + groupSize);
-                    if (!chunk) {
-                        return;
-                    }
-
-                    chunks.push(chunk);
-                    cursor += groupSize;
-                });
-
-                return chunks.join('-');
-            }
 
             function updateStepUI() {
                 stepPanels.forEach((panel) => {
@@ -256,7 +208,7 @@
 
             function validateCurrentStep() {
                 if (currentStep === 1 && !enrollmentIdInput.value) {
-                    setMessage('Please select your RSBSA record first.', true);
+                    alert('Please select your RSBSA record first.');
                     return false;
                 }
 
@@ -311,7 +263,7 @@
             function updateReview() {
                 reviewRsbsa.textContent = selectedEnrollment
                     ? `${selectedEnrollment.rsbsa_reference_number} - ${selectedEnrollment.full_name}`
-                    : '—';
+                    : (enrollmentIdInput.value ? `Enrollment #${enrollmentIdInput.value}` : '—');
 
                 reviewClaimType.textContent = claimTypeInput.value
                     ? (claimLabels[claimTypeInput.value] || claimTypeInput.value)
@@ -327,85 +279,16 @@
                 });
             }
 
-            async function searchRsbsa() {
-                const query = rsbsaSearchInput.value.trim();
-                if (query.length < 3) {
-                    setMessage('Enter at least 3 characters to search.', true);
+            window.addEventListener('claim-enrollment-selected', (event) => {
+                const enrollment = event.detail?.enrollment ?? event.detail?.[0]?.enrollment;
+                if (!enrollment) {
                     return;
                 }
 
-                rsbsaResults.innerHTML = '';
-                setMessage('Searching...');
-
-                const url = new URL(searchRoute, window.location.origin);
-                url.searchParams.set('q', query);
-
-                try {
-                    const response = await fetch(url.toString(), {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json',
-                        },
-                    });
-
-                    const payload = await response.json();
-                    const data = payload.data || [];
-
-                    if (!data.length) {
-                        setMessage(payload.message || 'No registered farmer found for this RSBSA number.', true);
-                        rsbsaResults.innerHTML = `
-                            <div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                                You are not registered in the system yet. Please contact the admin office for registration.
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    setMessage('Select your record below.');
-                    data.forEach((item) => {
-                        const button = document.createElement('button');
-                        button.type = 'button';
-                        button.className = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-3 text-left text-sm hover:border-emerald-400 hover:bg-emerald-50';
-                        button.innerHTML = `
-                            <p class="font-semibold text-emerald-900">${item.rsbsa_reference_number}</p>
-                            <p class="text-gray-700">${item.full_name}</p>
-                            <p class="text-xs text-gray-500">${item.barangay || 'N/A'}${item.municipality ? ', ' + item.municipality : ''}</p>
-                        `;
-                        button.addEventListener('click', () => {
-                            selectedEnrollment = item;
-                            enrollmentIdInput.value = item.id;
-                            selectedEnrollmentSummary.classList.remove('hidden');
-                            selectedEnrollmentSummary.textContent = `Selected: ${item.rsbsa_reference_number} - ${item.full_name}`;
-                            updateReview();
-                        });
-                        rsbsaResults.appendChild(button);
-                    });
-                } catch (error) {
-                    setMessage('Search failed. Please try again.', true);
-                }
-            }
-
-            rsbsaSearchButton.addEventListener('click', searchRsbsa);
-            rsbsaSearchInput.addEventListener('input', () => {
-                rsbsaSearchInput.value = formatRsbsaInput(rsbsaSearchInput.value);
+                selectedEnrollment = enrollment;
+                enrollmentIdInput.value = enrollment.id;
+                updateReview();
             });
-            rsbsaSearchInput.addEventListener('keydown', (event) => {
-                const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End', 'Enter'];
-                const isDigit = /^\d$/.test(event.key);
-                const hasModifier = event.ctrlKey || event.metaKey || event.altKey;
-
-                if (!hasModifier && !isDigit && !allowedKeys.includes(event.key)) {
-                    event.preventDefault();
-                }
-            });
-            rsbsaSearchInput.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    searchRsbsa();
-                }
-            });
-
-            rsbsaSearchInput.value = formatRsbsaInput(rsbsaSearchInput.value);
 
             document.querySelectorAll('.claim-type-card').forEach((button) => {
                 button.addEventListener('click', () => {
@@ -446,8 +329,6 @@
 
             if (oldEnrollmentId) {
                 enrollmentIdInput.value = oldEnrollmentId;
-                selectedEnrollmentSummary.classList.remove('hidden');
-                selectedEnrollmentSummary.textContent = 'RSBSA record selected from previous attempt.';
             }
 
             if (oldClaimType && claimRequirements[oldClaimType]) {
