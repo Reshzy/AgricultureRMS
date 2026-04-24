@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\ClaimRsbsaSearch;
 use App\Models\Claim;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -10,11 +11,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ClaimApplicationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_claim_apply_page_renders_livewire_rsbsa_search_component(): void
+    {
+        $this->get(route('claims.apply'))
+            ->assertOk()
+            ->assertSeeLivewire(ClaimRsbsaSearch::class);
+    }
 
     public function test_farmer_can_search_rsbsa_records(): void
     {
@@ -40,12 +49,37 @@ class ClaimApplicationTest extends TestCase
         $response->assertJsonPath('message', 'No registered farmer found for this RSBSA number.');
     }
 
+    public function test_livewire_search_shows_uninsured_records_as_ineligible(): void
+    {
+        Enrollment::factory()->create([
+            'first_name' => 'Insured',
+            'surname' => 'Farmer',
+            'rsbsa_reference_number' => '12-34-56-789-0001',
+            'has_insurance_registered' => true,
+        ]);
+
+        Enrollment::factory()->create([
+            'first_name' => 'Uninsured',
+            'surname' => 'Farmer',
+            'rsbsa_reference_number' => '12-34-56-789-0002',
+            'has_insurance_registered' => false,
+        ]);
+
+        Livewire::test(ClaimRsbsaSearch::class)
+            ->set('query', '123456789')
+            ->assertSee('Insured')
+            ->assertSee('Uninsured Farmer')
+            ->assertSee('Eligible to apply')
+            ->assertSee('No registered insurance - cannot apply');
+    }
+
     public function test_farmer_can_submit_a_claim_with_required_documents(): void
     {
         Storage::fake('public');
         Notification::fake();
         $enrollment = Enrollment::factory()->create([
             'rsbsa_reference_number' => 'RSBSA-7001',
+            'has_insurance_registered' => true,
         ]);
 
         $response = $this->post(route('claims.store'), [
@@ -91,6 +125,7 @@ class ClaimApplicationTest extends TestCase
     {
         $enrollment = Enrollment::factory()->create([
             'rsbsa_reference_number' => 'RSBSA-7002',
+            'has_insurance_registered' => true,
         ]);
 
         $response = $this->from(route('claims.apply'))->post(route('claims.store'), [
@@ -116,6 +151,7 @@ class ClaimApplicationTest extends TestCase
     {
         $enrollment = Enrollment::factory()->create([
             'rsbsa_reference_number' => 'RSBSA-7010',
+            'has_insurance_registered' => true,
         ]);
 
         $response = $this->from(route('claims.apply'))->post(route('claims.store'), [
@@ -136,6 +172,35 @@ class ClaimApplicationTest extends TestCase
 
         $response->assertRedirect(route('claims.apply'));
         $response->assertSessionHasErrors('contact_email');
+    }
+
+    public function test_claim_submission_fails_when_enrollment_has_no_registered_insurance(): void
+    {
+        $enrollment = Enrollment::factory()->create([
+            'rsbsa_reference_number' => 'RSBSA-7020',
+            'has_insurance_registered' => false,
+        ]);
+
+        $response = $this->from(route('claims.apply'))->post(route('claims.store'), [
+            'enrollment_id' => $enrollment->id,
+            'claim_type' => Claim::TYPE_DEATH,
+            'contact_email' => 'farmer@laravel.com',
+            'documents' => [
+                'death_certificate' => [
+                    UploadedFile::fake()->create('death_certificate.pdf', 120, 'application/pdf'),
+                ],
+                'beneficiary_valid_id' => [
+                    UploadedFile::fake()->image('valid_id.jpg'),
+                ],
+                'medical_certificate' => [
+                    UploadedFile::fake()->create('medical_certificate.pdf', 140, 'application/pdf'),
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect(route('claims.apply'));
+        $response->assertSessionHasErrors('enrollment_id');
+        $this->assertDatabaseCount('claims', 0);
     }
 
     public function test_admin_can_view_claims_list_and_update_claim_status(): void

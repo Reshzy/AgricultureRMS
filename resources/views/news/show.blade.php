@@ -63,7 +63,7 @@
         @if (!empty($news->categories))
         <div class="mt-3 flex flex-wrap gap-2">
             @foreach ($news->categories as $category)
-            <span class="px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">{{ ucfirst($category) }}</span>
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">{{ Str::headline($category) }}</span>
             @endforeach
         </div>
         @endif

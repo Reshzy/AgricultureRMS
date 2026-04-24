@@ -6,6 +6,9 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-semibold text-emerald-900">News Management</h1>
+    <a href="{{ route('admin.news.categories.index') }}" class="px-3 py-2 border border-emerald-900/20 text-emerald-700 rounded-lg hover:bg-emerald-50 transition">
+        <i class="fa-solid fa-tags mr-1"></i> Manage Categories
+    </a>
 </div>
 
 @if (session('status'))
@@ -60,7 +63,7 @@
                             @if (!empty($item->categories))
                             <div class="flex flex-wrap gap-1">
                                 @foreach ($item->categories as $cat)
-                                <span class="px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">{{ ucfirst($cat) }}</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">{{ Str::headline($cat) }}</span>
                                 @endforeach
                             </div>
                             @else
@@ -115,13 +118,14 @@
             <div>
                 <label class="block text-sm font-medium text-emerald-900 mb-2">Categories</label>
                 <div class="flex flex-wrap gap-3 mt-1 text-sm">
-                    @foreach (['weather','market','training','government','technology'] as $cat)
+                    @foreach ($categoryOptions as $cat)
                     <label class="inline-flex items-center">
-                        <input type="checkbox" name="categories[]" value="{{ $cat }}" class="rounded text-emerald-600 border-emerald-900/20 focus:ring-emerald-600">
-                        <span class="ml-2 capitalize text-emerald-900">{{ $cat }}</span>
+                        <input type="checkbox" name="categories[]" value="{{ $cat->slug }}" class="rounded text-emerald-600 border-emerald-900/20 focus:ring-emerald-600">
+                        <span class="ml-2 text-emerald-900">{{ $cat->name }}</span>
                     </label>
                     @endforeach
                 </div>
+                <p class="text-xs text-emerald-600 mt-1">Only approved categories are available. Create or update them in Manage Categories.</p>
             </div>
             <div>
                 <label class="block text-sm font-medium text-emerald-900 mb-2">Target Audience</label>

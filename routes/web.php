@@ -5,6 +5,7 @@ use App\Http\Controllers\ClaimApplicationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NewsCategoryController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\UserController;
@@ -115,6 +116,11 @@ Route::middleware([
     Route::get('/admin/news/{news}/edit', [NewsController::class, 'edit'])->name('admin.news.edit');
     Route::put('/admin/news/{news}', [NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/admin/news/{news}', [NewsController::class, 'destroy'])->name('admin.news.destroy');
+    Route::get('/admin/news/categories', [NewsCategoryController::class, 'index'])->name('admin.news.categories.index');
+    Route::post('/admin/news/categories', [NewsCategoryController::class, 'store'])->name('admin.news.categories.store');
+    Route::put('/admin/news/categories/{newsCategory}', [NewsCategoryController::class, 'update'])->name('admin.news.categories.update');
+    Route::patch('/admin/news/categories/{newsCategory}/archive', [NewsCategoryController::class, 'archive'])->name('admin.news.categories.archive');
+    Route::patch('/admin/news/categories/{newsCategory}/reactivate', [NewsCategoryController::class, 'reactivate'])->name('admin.news.categories.reactivate');
 
     // Admin Email Management
     Route::get('/admin/emails', [ContactController::class, 'index'])->name('admin.emails.index');

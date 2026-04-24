@@ -20,7 +20,7 @@
             >
                 <option value="">All Categories</option>
                 @foreach($availableCategories as $cat)
-                    <option value="{{ $cat }}">{{ ucfirst($cat) }}</option>
+                    <option value="{{ $cat }}">{{ Str::headline($cat) }}</option>
                 @endforeach
             </select>
         </div>
@@ -51,7 +51,7 @@
                                     <span
                                         class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200"
                                     >
-                                        {{ ucfirst($category) }}
+                                        {{ Str::headline($category) }}
                                     </span>
                                 @endforeach
                             </div>
@@ -110,7 +110,7 @@
                                     <span
                                         class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200"
                                     >
-                                        {{ ucfirst($category) }}
+                                        {{ Str::headline($category) }}
                                     </span>
                                 @endforeach
                             </div>
