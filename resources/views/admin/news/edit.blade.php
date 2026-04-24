@@ -6,9 +6,14 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-semibold text-emerald-900">Edit News Article</h1>
-    <a href="{{ route('admin.news.index') }}" class="px-3 py-2 border border-emerald-900/20 text-emerald-700 rounded-lg hover:bg-emerald-50 transition">
-        <i class="fa-solid fa-arrow-left mr-1"></i> Back to News
-    </a>
+    <div class="flex items-center gap-2">
+        <a href="{{ route('admin.news.categories.index') }}" class="px-3 py-2 border border-emerald-900/20 text-emerald-700 rounded-lg hover:bg-emerald-50 transition">
+            <i class="fa-solid fa-tags mr-1"></i> Manage Categories
+        </a>
+        <a href="{{ route('admin.news.index') }}" class="px-3 py-2 border border-emerald-900/20 text-emerald-700 rounded-lg hover:bg-emerald-50 transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to News
+        </a>
+    </div>
 </div>
 
 @if($errors->any())
@@ -57,13 +62,14 @@
                 <label class="block text-sm font-medium text-emerald-900 mb-2">Categories (select any)</label>
                 <div class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-2">
                     @php($selected = old('categories', $news->categories ?? []))
-                    @foreach (['weather','market','training','government','technology'] as $cat)
+                    @foreach ($categoryOptions as $cat)
                     <label class="inline-flex items-center">
-                        <input type="checkbox" name="categories[]" value="{{ $cat }}" class="rounded text-emerald-600 border-emerald-900/20 focus:ring-emerald-600" {{ in_array($cat, $selected ?? []) ? 'checked' : '' }}>
-                        <span class="ml-2 capitalize text-emerald-900">{{ $cat }}</span>
+                        <input type="checkbox" name="categories[]" value="{{ $cat->slug }}" class="rounded text-emerald-600 border-emerald-900/20 focus:ring-emerald-600" {{ in_array($cat->slug, $selected ?? []) ? 'checked' : '' }}>
+                        <span class="ml-2 text-emerald-900">{{ $cat->name }}</span>
                     </label>
                     @endforeach
                 </div>
+                <p class="text-xs text-emerald-600 mt-1">Only approved categories are available. Need a new one? Use Manage Categories.</p>
             </div>
 
             <div>

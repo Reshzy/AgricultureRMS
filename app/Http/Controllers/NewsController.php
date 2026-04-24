@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Models\NewsCategory;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -54,13 +56,16 @@ class NewsController extends Controller
         }
 
         $news = $query->paginate(10)->withQueryString();
+        $categoryOptions = $this->activeCategoryOptions();
 
-        return view('admin.news.manage', compact('news'));
+        return view('admin.news.manage', compact('news', 'categoryOptions'));
     }
 
     public function create()
     {
-        return view('admin.news.create');
+        $categoryOptions = $this->activeCategoryOptions();
+
+        return view('admin.news.create', compact('categoryOptions'));
     }
 
     public function store(Request $request)
@@ -70,7 +75,11 @@ class NewsController extends Controller
             'content' => ['required', 'string'],
             'featured_image' => ['nullable', 'image', 'max:5120'],
             'categories' => ['nullable', 'array'],
-            'categories.*' => ['string'],
+            'categories.*' => [
+                'string',
+                Rule::exists('news_categories', 'slug')
+                    ->where(fn (Builder $query) => $query->where('is_active', true)),
+            ],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string'],
             'audience' => ['required', 'string', Rule::in(['all_farmers', 'farmers', 'farmworker_laborer', 'fisherfolk', 'agri_youth'])],
@@ -124,7 +133,9 @@ class NewsController extends Controller
 
     public function edit(News $news)
     {
-        return view('admin.news.edit', compact('news'));
+        $categoryOptions = $this->activeCategoryOptions();
+
+        return view('admin.news.edit', compact('news', 'categoryOptions'));
     }
 
     public function update(Request $request, News $news)
@@ -134,7 +145,11 @@ class NewsController extends Controller
             'content' => ['required', 'string'],
             'featured_image' => ['nullable', 'image', 'max:5120'],
             'categories' => ['nullable', 'array'],
-            'categories.*' => ['string'],
+            'categories.*' => [
+                'string',
+                Rule::exists('news_categories', 'slug')
+                    ->where(fn (Builder $query) => $query->where('is_active', true)),
+            ],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string'],
             'audience' => ['required', 'string', Rule::in(['all_farmers', 'farmers', 'farmworker_laborer', 'fisherfolk', 'agri_youth'])],
@@ -186,5 +201,13 @@ class NewsController extends Controller
         $news->delete();
 
         return redirect()->route('admin.news.index')->with('status', 'News deleted');
+    }
+
+    protected function activeCategoryOptions()
+    {
+        return NewsCategory::query()
+            ->active()
+            ->ordered()
+            ->get(['name', 'slug']);
     }
 }

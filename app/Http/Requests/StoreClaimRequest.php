@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Claim;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,12 @@ class StoreClaimRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'enrollment_id' => ['required', 'integer', 'exists:enrollments,id'],
+            'enrollment_id' => [
+                'required',
+                'integer',
+                Rule::exists('enrollments', 'id')
+                    ->where(fn (Builder $query): Builder => $query->where('has_insurance_registered', true)),
+            ],
             'claim_type' => ['required', 'string', Rule::in(Claim::claimTypes())],
             'contact_email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
             'documents' => ['required', 'array'],
@@ -36,6 +42,16 @@ class StoreClaimRequest extends FormRequest
                 'mimes:jpg,jpeg,png,webp,pdf',
                 'max:5120',
             ],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'enrollment_id.exists' => 'Only enrollments with registered insurance can apply claims.',
         ];
     }
 
