@@ -18,7 +18,7 @@ class ClaimRsbsaSearch extends Component
 
     public function mount(string $initialQuery = '', ?int $selectedEnrollmentId = null): void
     {
-        $this->query = trim($initialQuery);
+        $this->query = $this->formatRsbsaQuery($initialQuery);
         $this->selectedEnrollmentId = $selectedEnrollmentId;
 
         if ($selectedEnrollmentId) {
@@ -43,17 +43,18 @@ class ClaimRsbsaSearch extends Component
     public function getResultsProperty(): array
     {
         $search = trim($this->query);
+        $digitsOnly = preg_replace('/\D/', '', $search) ?? '';
 
-        if (mb_strlen($search) < 3) {
+        if (mb_strlen($digitsOnly) < 3) {
             return [];
         }
 
         return Enrollment::query()
-            ->where('has_insurance_registered', true)
             ->where(function ($query) use ($search): void {
+                $digitsOnly = preg_replace('/\D/', '', $search) ?? '';
+
                 $query->where('rsbsa_reference_number', 'like', '%'.$search.'%')
-                    ->orWhere('first_name', 'like', '%'.$search.'%')
-                    ->orWhere('surname', 'like', '%'.$search.'%');
+                    ->orWhereRaw("REPLACE(rsbsa_reference_number, '-', '') like ?", ['%'.$digitsOnly.'%']);
             })
             ->limit(10)
             ->get()
@@ -67,6 +68,7 @@ class ClaimRsbsaSearch extends Component
                 ])->filter()->implode(' ')),
                 'barangay' => $enrollment->address_barangay,
                 'municipality' => $enrollment->address_municipality_city,
+                'has_insurance_registered' => (bool) $enrollment->has_insurance_registered,
             ])
             ->all();
     }
@@ -74,17 +76,26 @@ class ClaimRsbsaSearch extends Component
     public function getMessageProperty(): string
     {
         $search = trim($this->query);
+        $digitsOnly = preg_replace('/\D/', '', $search) ?? '';
 
         if ($search === '') {
-            return 'Type your RSBSA number or name to search.';
+            return 'Type your RSBSA number to search.';
         }
 
-        if (mb_strlen($search) < 3) {
-            return 'Enter at least 3 characters to search.';
+        if (mb_strlen($digitsOnly) < 3) {
+            return 'Enter at least 3 digits to search.';
         }
 
         if (empty($this->results)) {
-            return 'No insured enrollment found. Only enrollments with registered insurance can apply.';
+            return 'No enrollment found for that RSBSA number.';
+        }
+
+        $hasEligibleResult = collect($this->results)->contains(
+            fn (array $item): bool => ($item['has_insurance_registered'] ?? false) === true
+        );
+
+        if (! $hasEligibleResult) {
+            return 'Record found, but no registered insurance. You cannot apply yet.';
         }
 
         return 'Select your record below.';
@@ -92,7 +103,14 @@ class ClaimRsbsaSearch extends Component
 
     public function getMessageIsErrorProperty(): bool
     {
-        return mb_strlen(trim($this->query)) >= 3 && empty($this->results);
+        $digitsOnly = preg_replace('/\D/', '', trim($this->query)) ?? '';
+
+        return mb_strlen($digitsOnly) >= 3 && empty($this->results);
+    }
+
+    public function updatedQuery(string $value): void
+    {
+        $this->query = $this->formatRsbsaQuery($value);
     }
 
     protected function loadSelectedEnrollment(int $enrollmentId): void
@@ -130,5 +148,21 @@ class ClaimRsbsaSearch extends Component
             'message' => $this->message,
             'messageIsError' => $this->messageIsError,
         ]);
+    }
+
+    protected function formatRsbsaQuery(string $value): string
+    {
+        $digits = preg_replace('/\D/', '', $value) ?? '';
+        $digits = mb_substr($digits, 0, 13);
+
+        $parts = [
+            mb_substr($digits, 0, 2),
+            mb_substr($digits, 2, 2),
+            mb_substr($digits, 4, 2),
+            mb_substr($digits, 6, 3),
+            mb_substr($digits, 9, 4),
+        ];
+
+        return collect($parts)->filter()->implode('-');
     }
 }

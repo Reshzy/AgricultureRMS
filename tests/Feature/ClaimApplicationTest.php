@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ClaimApplicationTest extends TestCase
@@ -46,6 +47,30 @@ class ClaimApplicationTest extends TestCase
         $response->assertOk();
         $response->assertJsonCount(0, 'data');
         $response->assertJsonPath('message', 'No registered farmer found for this RSBSA number.');
+    }
+
+    public function test_livewire_search_shows_uninsured_records_as_ineligible(): void
+    {
+        Enrollment::factory()->create([
+            'first_name' => 'Insured',
+            'surname' => 'Farmer',
+            'rsbsa_reference_number' => '12-34-56-789-0001',
+            'has_insurance_registered' => true,
+        ]);
+
+        Enrollment::factory()->create([
+            'first_name' => 'Uninsured',
+            'surname' => 'Farmer',
+            'rsbsa_reference_number' => '12-34-56-789-0002',
+            'has_insurance_registered' => false,
+        ]);
+
+        Livewire::test(ClaimRsbsaSearch::class)
+            ->set('query', '123456789')
+            ->assertSee('Insured')
+            ->assertSee('Uninsured Farmer')
+            ->assertSee('Eligible to apply')
+            ->assertSee('No registered insurance - cannot apply');
     }
 
     public function test_farmer_can_submit_a_claim_with_required_documents(): void
